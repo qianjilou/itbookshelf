@@ -12,10 +12,10 @@ webpack
 
 ---
 
-###Welcome to use MarkDown
+### Welcome to use MarkDown
 
 目　　录  
-###第1章　JavaScript简介	
+### 第1章　JavaScript简介	
 1.1　JavaScript简史　　1	
 1.2　JavaScript实现　　2	
    1.2.1　ECMAScript　　3	
@@ -23,7 +23,7 @@ webpack
 1.2.3　浏览器对象模型（BOM）　　8	
 1.3　JavaScript版本　　8	
 1.4　小结　　9	
-###第2章　在HTML中使用JavaScript 10	
+### 第2章　在HTML中使用JavaScript 10	
 2.1　script元素　　10	
 2.1.1　标签的位置　　12		
 2.1.2　延迟脚本　　13	
@@ -34,7 +34,7 @@ webpack
 2.3　文档模式　　16  
 2.4　noscript元素　　18  
 2.5　小结　　18  
-###第3章　基本概念　　19  
+### 第3章　基本概念　　19  
 3.1　语法　　19  
 3.1.1　区分大小写　　19  
 3.1.2　标识符　　19  
