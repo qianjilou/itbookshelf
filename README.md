@@ -3,7 +3,7 @@
 
 | 我 | 的  | 书架 |
 |---|----|----|
-|封面|![][images](https://raw.githubusercontent.com/qianjilou/tools/master/images/2jquery.jpg)|cell3|
+|封面|![images](https://raw.githubusercontent.com/qianjilou/tools/master/images/2jquery.jpg)|cell3|
 |书名|javascript高级程序设计(第3版)|cell3|
 |cell1|cell2|cell3|
 
