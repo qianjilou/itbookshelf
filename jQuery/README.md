@@ -7,9 +7,6 @@
 |---|----|
 |书名|javascript高级程序设计(第3版)|
 |cell1|cell2|
-
-
-
 |第一章  认识jQuery|2.7 还有其它选择器么|
 |1.1  JavaScript和JavaScript库|2.7.1  jQuery提供的选择器不够用？|
 |1.1.1  JavaScript简介|2.7.2  其它使用CSS选择器的方法|
