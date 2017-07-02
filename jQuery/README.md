@@ -5,8 +5,8 @@
 | 我 的  | 书架 |
 |---|----|
 |第一章  认识jQuery|2.7 还有其它选择器么？|
-|1.1  JavaScript和JavaScript库 101|2.7.1  jQuery提供的选择器不够用？|
-|1.1.1  JavaScript简介 101|2.7.2  其它使用CSS选择器的方法|
+|- 1.1  JavaScript和JavaScript库 101|2.7.1  jQuery提供的选择器不够用？|
+|- 1.1.1  JavaScript简介 101|2.7.2  其它使用CSS选择器的方法|
 |1.1.2  JavaScript库作用及对比 101|2.8  小结|
 |1.2  加入jQuery|第三章  jQuery中的DOM操作|
 |1.2.1  jQuery简介|3.1  DOM操作的分类|
