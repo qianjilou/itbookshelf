@@ -1,8 +1,7 @@
 # Overcome myself
 
-### no TV
-
 美工
+
 [PS常用功能](https://www.baidu.com)
 
 - **AUGUST**
