@@ -1,0 +1,515 @@
+##  第19章 E4X([返回首页](https://github.com/qianjilou/javascript3))
+**本章内容**
+- [ ] E4X新增的类型
+- [ ] 使用E4X操作XML
+- [ ] 语法的变化  
+
+2002年，由BEASystems为竹的几家公司逑议为ECMAScript增加一项扩展，以便在这门语R
+中添加原生的XML支持。2004年6	, E4X ( ECMAScript for XML )以ECMA-357标准的形
+式发布;2005年12月乂发布f修订版。E4X本身不娃一门语言.它只是ECMAScript语B的可选扩展。
+就其本身而言，E4X为处理XML定义f新的语法，也定义了特定于XML的对象。
+尽管浏览器实现这个扩展标准的步伐非常缓慢，但Pirefox 1.5及更高版本则支持几乎全部E4X标准。
+本章主要讨论Firefox对E4X的实现。
+19.1 E4X的类型
+作为对ECMAScript的扩展，E4X定义了如卜‘几个新的全局类甩。
+XML: XML结构中的任何一个独立的部分,.、
+XMLLisC: XML对象的集合。
+Namespace:命名空间前缀与命名空间URI之间的映射。
+QName: rtl内部名称和命名空间LJR丨组成的一个限定名。
+E4X定义的这个4个类塑吋以表现XML文档屮的所存部分，其内部机制是将每一种类铟（特别是 XML和XMLList )都映射为多个D0M类彻。
+XML 类型
+XML类沏足E4X中定义的一个退要的新类型，n丨以用它来表现XML结构中任何独立的部分。XML 的实例可以表现元索、特性、注释、处理指令或文本点。XMI,类型继承H Object类铟，因此它也继 承了所有对象默认的所有S性和方法。创建XML对象的方式不止一种，第一种方式是像下面这样调用其 构造函数：
+var x = new XKL();
+这行代码会创逑一个空的XML对象，我们能够向其中添加数据。另外，也nj：以向构造函数中传人一 个XML字符串，如下面的例f所示：
+
+19.1 E4X 的类型 547
+var x = new XML.(-<employee position=\-Software Engir.eGr\Mxn£une>Nicholas "Zakas</name></employee>");
+传人到构造函数屮的XML字符串会被解析为分S的XML对象。除此之外'，还n丨以向构造函数中 传人DOM文档或节点，以便它们的数据可以通过E4X来表现，语法如下：
+var x = new XML(xmldom);
+虽然这拽创建XMI,对象的方式都还不错，仍最强大也Ai吸引人的方法，则是使用XML字面fi将XML 数据直接指定给•个变tt。XML字面M就是嵌人到JavaScript代码中的XML代码。下面来肴一个例子。
+
+
+
+var employee = <eraployee posicion="Software Engineers
+<namo>Nicho3as C. Zakas</name>
+</employee>;
+XMLTypeExampleOl.htm
+在这个例子中，我们将…个XML数据结构立接指记给r—个变埴。这种简洁的语法N样可以创建 一个XML对象，•将它賦值给employee变
+Firefox对E4X的实现不支持解析XML的开头代码（prolog) 3无论<?xml 'Ss^^version=**1.0* ?>出现在传递给XML构造函数的文本中，还是出现在XML字面量 中，都会导致语法错误。
+XML类型的toXMLString()方法会返回XML对象及其子节点的XML字符串表示。另一方面，该 类型的toString <)方法则会基】‘•不同XML对象的内容返冋不同的字符串。如栗内容简单（纯文本）， 则返回文本;否则，toString(>方法与toXMLStringO方法返回的字符串一样。来卷卜曲的例子。
+var data = <name>Nicholas C. 7,akas</name>;
+alert(data.toString{));	//"Nicholas C, Zakas"
+alerc(data.toXMLString()); //"<name>Nicholas C. Zakas</name>"
+使用这两个方法，几乎可以满足所有序列化XML的崙求。
+19.1.2 XMLList 类型
+XMLList类型表现XML对象的有序集合。XMLList的DOM对等类型是NodeList,但与Node和 NodeList之间的K别相比，XML和XMLList之间的K别是有意设计得比较小的。要显式地创建--个 XMLList对象，可以像卜‘面这样使用XMLList构造阐数：
+var list = new XMLList();
+与XML构造函数一样，也可以丨M其中传人一个待解析的XML字符串。这个字符串可以不止包含一 个文忾元素，如下面的例子所示：
+var list = new XMLtiist {;
+XMLListTypeExampleOL him
+结果，保存在这个list变M中的XMI,List就包含丫两个XML对象，分別是两个<item/>元素。
+
+548 第 19 章 E4X
+还可以使用加号（+ )操作符来组合两个或多个XML对象，从而创建XMLList对象。加号操作符 在E4X中已经被承载，可以用于创建XMLLis;:,如下所示：
+var list = <item/> ♦ <item/> ;
+这个例子使用加号操作符组合r两个XML字面就，结果得到•个XMLList。同样的组合操作也可 以使用特殊的 <> 和</>语法来完成，此时不使用加号操作符，例如： var list = <><item/xitem/></>;
+尽管时以创建独立的XMLList对象,但是这类对象通常是在解析较人的XML结构的过程中梢带着 被创建出来的。来看下面的例子：
+
+
+
+var er.ployees = <employees>
+<efr.ployee positions"Softwaro Er.gineer">
+<r.ame>Nicholas C. Zakas</name>
+</employee>
+<employee position-"Salesperson">
+<name>Jirr. Srr.ith</name>
+</employee>
+</employees>;
+XMLListiypeExample02.htm
+以上代码定义的employees变董中包含着一个XML对象，表>K<employees/>元素。由于这个兀
+素又包含两个<employee/>兀素，因[flf就会创建相应的XMLList对象，并将其保存在employees.
+employee中。然后，可以使用方括号语法及位置来访问每个元素：
+var firstEmployee = employees.employeefO]; var secondEmployee = employees.employee[1];
+每个XMLList对象都有length()方法，用于返冋对象中包含的元素数量。例如： alert (employees.employee.length(}) ; //2
+注意，length()是方法，不是属性。这一点是故意与数组和NodeList相区别的。
+E4X有意模糊XML和XMLList类型之间的区别，这一点很值得关注。实际上，一个XML对象与一 个只包含一个XML对象的XMLList之间，并没有显而易见的K别。为了减少两者之间的区别，每个XML 对象也同样有-个length()方法和一个由[0]引用的M性（返回XML对象自身)。
+XML与XMLList之间的这种兼容性可以简化E4X的使用，因为有些方法可以返回任意一个类型。 XMLList对象的toString(>和toXMLStringU方法返回相同的字符串值，也就是将其包含的 XML对象序列化之后再拼接起来的结果。
+19.1.3 Namespace 类型
+E4X中使用Namespace对象来表现命名空间。通常，Namespace对象是用来映射命名空间前缀和 命名空间URI的，不过有时候并不需要前缀。要创建Namespace 象,可以像下面这样使用Namespace 构造函数：
+var ns = new Namespace^};
+而传人URI或前缀加URI,就可以初始化Namespace对象，如下所示:
+
+
+
+
+
+19.1 E4X 的类型 549
+
+
+
+var ns = new Namespace("
+
+http://www.wrox.com/*);
+var wrox = new Namespace("wrox", "
+
+http://www.wrox.com/*)
+//没有前蜓的命名空间 //wrox命名空间
+Namespace TypeExampleOl. him
+可以使用prefix和uri属性来取得Namespace对象中的信息:
+alert{ns.uri); alert{ns.prefix); alert(wrox.uri)? alert(wrox.prefix);
+//"http://www,wrox.com/" //undefined
+//"http：//
+
+www.wrox.com/" //"wrox"
+Namespace7ypeExample01.htm
+在没有给Namespace对象指定前缀的情况"F, prefix属性会返回undefined。要想创建默认的 命名空间，应该将前缀设置为空字符卑。
+如果XML字面量中包含命名空间，或者通过XML构造函数解析的XML字符串中包含命名空间信息,
+那么就会自动创建Namespace对象。然后，就nf以通过前缀和namespace 〇方法来取得对Namespace 对象的引用。来看下面的例子：
+
+
+
+var xml - <wrox:root xmlns：wrox*"http：//
+
+www.wrox.com/*>
+<wrox：message>Hello World!</wrox：message>
+</wrox：root>;
+19
+var wrox = xml.namespace("wrox"); alert(wrox.uri); alert(wrox.prefix);
+NamespaceTypeExample02. htm
+在这个例子中，我们以XML字面M的形式创建了一个包含命名空间的XKL片段。而表现wrox命 名空间的Namespace对象可以通过namespace ("wrox")取得，然后就可以访问这个对象的uri和 prefix属性了。如果XML片段中有默认的命名空间，那么向namespaceU中传入空字符串，即P7取 得相应的Namespace对象。
+Namespace对象的toString ()方法始终会返回命名空间URI。
+19.1.4 QName 类型
+QName类型表现的是XML对象的限定名，即命名空间与内部名称的组合。向QName构造函数中传 人名称或Namespace对象和名称，可以手工创建新的QName对象，如下所示：
+var wrox = new Namespace(Bwrox", "http：//va^w.wrox.com/");
+var wroxMessage = new QName (wrox, "message") ;	//表示"wrox:message*
+QNameTypeExample01.htm
+创建了 QName对象之后，可以访问它的两个属性：uri和l〇caiName。其中，uri属性返回在创 建对象时指定的命名空间的URI(如果未指定命名空间，则返回空宇符串），而localNaine属性返回限 定名中的内部名称，如下面的例子所示：
+
+550 第 19 章 E4X
+alert(wroxMessage.uri);	//"
+
+http://www.wrox.com/
+alert(wroxMessage.localName);	//"message"
+QNameTypeExample01.htm
+这两个厲性是只读的，如果你想修改它们的值，会导致错误发生。QName对象重V了 t〇String() 方法，会以uri::localMame形式返间一个字符串，对于前面的例+来说，就是-
+
+http://www.wrox. com/：：message"〇
+在解析XML结构时,会为表示相应元素或特性的XML对象自动创建QName对象。可以使川这个XML 对象的nane ()方法取得与该XML Xt象关联的QName对象，如下面的例子所示：
+var xml ^ < wrox：root xmlns：wrox="
+
+http://ww.wrox.com/',>
+<wrox jmcssagoHollo World! < /wrox ： roessage>
+</wrox： rooo ;
+var wroxRoot = xml.name();
+alert(wroxRoot.uri)?	"•
+
+http://www.wrox.com/"
+alert(wroxRoot.localName);	//"root"
+QNameTypeExample02.htm
+这样，即便没有指定命名空间信息，也会根据XML结构中的元素和特性创建一个QName对象。
+使WsetNameU方法并传人-•个新QName对象，可以修改XML对象的限定名，如下所示：
+xml.setName(new QName("newroot"));
+通常，这个方法会在修改相应命名空间下的元素标签名或特性名时用到。如果该名称不属于任何命 名空间，则付以像下面这样使用seti.〇ca】Name(>方法来修改内部名称：
+xml.setLocalNamc("newtagname");
+—般用法
+在将XMI.对象、元素、特性和文本集合到一个层次化对象之后，就可以使用点号加特性或标签名的 方式来访问其中不同的层次和结构。每个子元素都是父元素的一个属性，而属性名与元素的内部名称相 同。如果子元素只包含文本，则相应的厲性只返冋义本，如下面的例子所示。 var employee = <employee posiDion=MSoCcware Engineers <name>Nicholas C. Zakas</naroe>
+</cmployee>;
+alert (employee.name) ; //"Nicholas C. Za)casM
+以上代码中的<加1116/>元素只包含文本d访问employee.name即可取得该文本，而在内部需要定 位到<name/>元索，然后返回相应文本。由于传人到alert()时，会隐式调川t:oString()力•法，因此 显示的是<narne/>中包含的文本。这就使得访问XML文档中包含的文本数据非常方便。如果有多个元素 具有相同的标签名，则会返冋XMLList。下面冉看.-个例子。
+var omployces = <cmployeos>
+<employee positions"Software Engineer•> <name>Nicholas C. 7>akas</name> </employee>
+<employee position*"Salesperson0>
+
+19.2 —般用法	551
+<r.ame>Jim Smich</name>
+</employce>
+</emp1oyees >;
+alert(en«)loyees.empl〇yee[0].name);	//"Nicholas C. Zakae"
+alert(employees.employee[1].name);	//"Jim
+这个例+访问广每t<emPl〇yee/>元素并返丨"1了它们<name/>元素的值。如果你不确定f元素的内 部名称，或齐你想访问所有子元素，不竹其名称足什么，也可以像K面这样使用摄号（*)。
+var allChiidren = employees.*;	//返回所有子元素，不管其名称是什么
+f	alert(employees.*[0J.name”	//"Nicholas C. Zakss"
+UsageExampleOl. htm
+与K•他M性一样，M兮也可能返回xm,对象，或返冋xKLList对象，这要取决Txml结构。 要达到同样的U的，除了W性之外，还吋以使用ChUdu方法。将厲性名或索引值传递给chiid(> 方法，也会得到相间的值。来宥下而的例-f。
+var firstChild = employees .chiid(O) ?	//与 employees. * [0]相同
+var ezr.ployeeList = employees .child ("employee") ;	//与 employees .employee 相同
+var allChiidren = employees.chiJd("*") ;	//与 employees.*相同
+为广再方便一邱，还冇一个children (I方法始终返间所有元素。例如：
+var allChiidren = err.ployees.children{) ;	//与 employees•*相同
+而另一T方法elements ()的行为与child()类似，K別仅在T-它只返li!】表不•元索的XKL对象。例如：
+var employeeList = employees .elements ("employee");	//与 empioyeey-employee 相网
+var allChiidren = employees.elements ("*w);	//与 employees. *相同
+这些方法为JavaScript开发人M提供了访问XML数据的较为熟悉的语法。
+要删除子元素，可以使用delete操作符，如F所示：
+delete employees.employee(0|; alert(employees.eniployee.lengthU ) ;	//I
+显然，这也iK是将子节点看成M性的一个主要的优点。
+19.2.1访问特性
+访问特性也可以使川点语法，不过其®法稍有扩充。为了区分特性名与子元素的标签名，必须在名 称前面加上一个@宁符。这是从XPath中借鉴的语法;XPath也是使用@来区分特件和标签的名称。不过， 结果吋能就是这种诺法希起来比较奇怪，例如：
+var employees » <c.,nployees>
+<employee positions"Software Engineor">
+<name>Nicholas C. Zakas</name>
+</empl〇yee>
+<empl〇yee position-wSalesper6〇n">
+<naine>Jim Smith</name>
+</en\ployee>
+< /	1 oyeas > ;
+alert (employees .employee [0] .^position); //"Software Engineer*1
+AttributesExampleOL htm
+
+552 第 19 章 E4X
+与元素一样，每个特性都由一个属性来表示，而且可以通过这种简写语法来访问。以这种语法访问 特性会得到一个表示特性的XML对象，对象的toString 〇方法始终会返间特性的值。要取得特性的名 称，可以使用对象的name (>方法。
+另外，也可以使用child()方法来访问特性，只要传人带有@前缀的特性的名称即可。
+alert(employees.employee[0].child{n©position"));	//"Software Engineer"
+AttributesExampleOI. htm
+由丁-访问XML对象的属件时也可以使用chi Id (>,因此必须使用@字符麥区分标签名和特性名。 使用attributeO方法并传人特性名，可以只访问XML对象的特性/与child(>方法不同，使 用attributed)方法时，不箱要传人带@字符的特性名。下面是一个例子。
+alert{employees.employee[0|.attribute("position")); //"Software Engineer"
+AttributesExampleOI .htm
+这-种访问特性的方式同时适用于XML和XMLList类型。对于XML对象来说，会返回一个表示相 应特性的XML对象;对XMLList:对象来说，会返回一个XMLList对象，其中包含列表中所冇元素的 特性XML对象。对于前面的例？而言，employees.employee.©position返回的XMLList将包含两 个对象：一个对象表示第一个<611^1〇766/>元素中的position特性，另一个对象表示第二个元素中 的同一特性。
+要取得XML或XMLList对象中的所有特性，可以使用attributes U方法。这个方法会返间一个 表示所有特ft的XMLList对象。使用这个方法与使用的结果相同，如下面的例子所示。
+//下面两种方式都会取得所有特性
+var attsl = employees.employee[0)
+var atts2 = employees.employeefO].attributes();
+在E4X中修改特性的值与修改属性的值一样非常简单，只要像下面这样为特性指定一个新值即可。
+employees .employee [0J .©position = "Author";	//修改 position 特性
+修改的特性会在内部反映出来，换句话说，此后再序列化XML对象，就会使用新的特性值。同样, 为特性陚值的语法也可以用来添加新特性，如下面的例子所示。
+employees.employee[01 .©experience - "8 years";	//务和 experience 特性
+employees.employee(0) .©manager = "Jim Smith" ;	//洛加 manager 特性
+由于特性与其他ECMAScript属性类似，因此也可以使用delete操作符来删除特性，如下所示。
+delete employees.employee[0] .©position;	//州除 position 种性
+通过属件来访问特性极大地简化了与底层XML结构交互的操作。
+19.2.2其他节点类型
+E4X定义了表现XML文档中所有部分的类型，包括注释和处理指令。在默认情况上，E4X不会解 析注释或处理指令，W此这些部分不会出现在最终的对象层次中。如果想让解析器解析这些部分，可以 像下面这样设置XML构造函数的下列两个属性。
+
+19.2 —般用法	553
+XML.. ignoreComments = false;
+XML.ignoreProcessinglnstructions = false;
+在设置了这两个属性之后，E4X就会将注释和处理指令解析到XML结构中。
+由于XML类型可以表示所有节点，因此必须有一种方式来确定节点类型。使用nodeKind (丨方法可 以得到XML对象表示的类型，该访问可能会返[丨^text:”、"element"、"comment"、"processing- instruction"或1"attribute"。以 F面的 XML 对象为例。
+
+
+
+var employees = <einployees>
+<?23ont forget the donuts?>
+<employee position="Software Engineer">
+<name>Nicholas C. Zakas</name>
+</employee>
+added-->
+<employee position="Salesperson">
+<name>Jim Smith</name>
+</employee>
+</employees> ;
+我们可以通过F面的表格来说明nodeKincM )返回的节点类型。
+不能在包含多个XML对象的XMLList上调用nodeKindU方法;否则，会抛出-•个错误。
+口丁以只取得特定类型的节点，而这就要用到下列方法。
+attributes ():返回XML对象的所有特性。
+comments ():返回XML对象的所有子注释节点。
+elements (tagrWame):返XML对象的所奋子兀素。可以通过提供兀素的tagName (标签名） 来过滤想要返回的结果。
+processinglnstructions(name):返冋XML对象的所有处理指令。可以通过提供处理指令 的name (名称）来过滤想要返冋的结果。
+text <):返冋XML对象的所有文本子节点。
+上述的每一个方法都返回一个包含适当XML对象的XMLList。
+使用hasSimpleCont:ent ()和hasComplexContent ()方法，可以确定XML对象中是只包含文本，
+还是包含更复杂的内容。如果XML对象中只包含子文本节点，则前一个方法会返回tme;如果XML对
+象的子节点中有任^>丨非文本节点，则后•个方法返丨"丨true。来看下面的例子。
+alert(employees.employee[〇I.hasComplexContent());	//true
+alert (employees .employee [0] .hasSimpleContent ⑴;	//false
+alert{employees.employee(0].name.hasCon^>lexContent());	//false
+alert (employees.employee [0] .naxne.hasSin?5leContent () ) ;	//true
+利用这些方法，以及前面提到的其他方法，可以极大地方便查找XML结构中的数据。
+19.2.3查询
+实际上，E4X提供的査询语法在很多方面都与XPath类似。取得元素或特性值的简单操作是最基本
+
+554 第 19 章 E4X
+的杳询。在丧洵之前,不会创违表现XML文杓结构中不同部分的XML对象。从底层来看,XML和XMLList 的所有厲性节实上都足丧询的结朵。也就娃说，引川不表现XML结构中某一部分的域性仍然会返N XMt,I,ist;只不过这个XMLList中什么也不会包含。例如，如采基于前面的XML示例执行下列代{>5, 则返M的结果就是空的。
+
+
+
+var cats = employees.cat;
+alert(cats.length{))?	//0
+QueryingExample01.htm
+这个査询想要查找<empl〇yeeS/>中的<caL/>元索，何这个元紊并不存在。h面的第一行代码会返 丨"I一个空的XMLList对象。虽然返问的是空对象，但查询可以照常进行，而不会发生异常。
+前面我们石到的人多数例子都使用点诰法来i方问苡接的子节点。而像下面这样使用两个点，则Hi以 进一步扩展丧询的深度，査询到所有沿代节点》
+var allDescendants = employees.	//取得<employces/>^所有后代节点
+上面的代码会返卩1丨<61^1〇7£36^/>元素的所有后代丨f点。结果中将会包含元素、文本、注释和处理 指令，最后两种节点的有无取决于在xml构造函数上的设a (前面曾经讨论过）;但结果中不会包贪特 性。要想取得特定标签的元素，宙要将呈号替换成实阽的标签名。
+var d^-lNames -- employees, .name;	//取得作为<omploy<2es/>后代的所有<namc/>节点
+同样的丧询可以使用descendants (>方法来完成。作不给这个方法传递参数的情况K,它会返回 所有后代节点（与使州相同），而传递-个名称作为参数则可以限制结果。下面就是这两种情况的 例子。
+var a〕ll)escendants = employees .descendants () ;	//所有后代节点
+var allNames = employees.descendants ("name");	//后代中的所有<name/>_^"3|t
+还nr以取得所有后代元素中的所心'特性，方法是使用F列任何一行代码。
+var allAttributes = employees. .0*;	//取得所有后代元素中的所有特性
+var allAttributes2 = employees.descendants (*@*") ;	//同上
+勺限制结果中的后代元素一样，也可以通过州完整的特性名来荇换星号达到过滤特件的h的。例如:
+var allAttributes = employees, .^position;	"5又得所有 position 特性
+var aIlAtiribuLes2 - employees.descendants("^position");	//同Ji
+除了访问后代元素之外，还"丨以指定查询的条件。例如，要想返间position特性值为 n Salesperson"的所有<employee/>元素，可以使用下面的杳询：
+var salespeople = employees.employee.(^position == "Salesperson"};
+同样的i再法也可以fflr•修改XML结构中的某一部分。例如，可以将第一位销售员（saiesperson) 的position特性修改为"Senior Salesperson"，代码如下：
+employees.employee.(©position == "Salesperson"}[01•@position= "Senior Salesperson";
+注意.丨括号中的*达式会返M—个包含结果的xMLList, rW方括9返W其中的第一项，然后我们 审力• Imposition戚性的值。
+
+19.2 —般用法	555
+使用parent ()方法能够在XML结构中h溯，这个方法会返丨"丨_ +•个XML对象，衣示当前XML对象 的父元索。如果在XMLList上调用parent (>方法，则会返M列表中所冇对象的公共父元索。下面是 一个例子。
+var employees2 = employees.employee.parent{);
+这1fi,变Memployces2中包舍若与变^employees相同的值D在处理来源未知的XML对象时， 经常会用到parent ()方法。
+19.2.4构建和操作XML
+将XML数据转换成XML对象的方式有很多种。前面咎经讨论过，可以将XML7符串传递到XML 构造函数中，也可以使用XML字面fl。相对而言，XML字面《方式®方便一邱，W为可以在字面M中嵌 人JavaScript变量，语法是使用花括号（（>)。4以将JavaScript变幢嵌人到字面设中的任意位置上，如 下面的例+所示。
+var tagNeune = "color"; var color = "red*;
+var xml = < {tagNamo} > {color} < / {t agKaine} > ;
+alert(xml.toXMLScring());	//"<c〇]〇r>red</color>
+XMLConstructionExampleOL htm
+在这个例f•中，XML字的标签名和文本值都是使用花括号语法插人的。冇了这个语法，就nf以 宵去在构建XML结构时拼接字符串的麻烦。
+F-4X也支持使用标准的JavaScript诺法来构建完整的XML结构。如前所述，大多数必要的操作都 是丧询，（W.HJ卩便元索或特性不存在也不会抛出错误。在此基础h更进一步，如果将一个值指定给一个 不存在的元素或特性，E4X就会改先在底M创违相应的结构，然后完成赋值。来宥下面的例子。
+var employees = <employees/>;
+employees.employee.name * "Nicholas C. X.akas";
+employees.employee.@posicion = "Software Engineer";
+XMLConstructionExample02. htm
+这个例子一开始声明r<emPl〇yeeS/>元素，然后在这个元素基础上开始构建XML结构。第二行 代码在<employees/>屮仓!|建广-•个<enployee/>元素和一个<name/>元素，并指定丫文本值。第三行 代码添加了一个position特性并为该特性指定了值。此时构建的XML结构如下所示。
+<employees>
+<empJoyoc posiLions"Software Fnginecr">
+<namc>Nicholas C. Zakas</name>
+</employee>
+</omployee9>
+当然，使用加妗操作符也可以再添加一f<emPl〇yee/>元素，如下所示。
+employees.employee <employee position="Salesperson">
+<name>Jim Smith</name>
+</er^ployee> ;
+XMLConstructionExampie02.htm
+
+556 第 19 章 E4X
+最终构建的XML结构如下所示:
+<employees>
+<employee positions"Software Engineer*>
+<name>Nicholas C. Zakas</name>
+</employee>
+<employee positions"Salesperson">
+<name>Jim Smith</name>
+</employee>
+</employees>
+除了上面介绍的基本的XMI.构建语法之外，还有一些类似DOM的方法，简介如下。
+ appendChiId < chi	:将给定的chi Jd作为子节点添加到XMLList的末尾。
+copy ():返回XML对象副本。
+insertiChildAfter (re_fl\fode,	:将 chi2d作为子节点插人到 XMLList 中 refNbde 的后面。
+insertChildBefore(refAtocte, chi_2d):将 child作为子节点插人到 XMLList 中 refNbde 的前面。
+prependChild( chiJd):将给定的chi 2d作为子节点添加到XMLList的开始位置。
+replace (propertyWa/ne, value):用 vaJue 值替换名为 propertyWame 的属性，这个属性 可能是一个元素，也可能是一个特性。
+UsetChildren(chiJdren):用chiidren替换马前所有的子元素，children可以是XML对 象，也可是XMLList对象。
+这些方法既非常有用，也非常容易使用。下列代码展示了这些方法的用途。
+
+
+
+var employees = <employees>
+<employee position=*Software Engineer">
+<name>Nicholas C. Zakas</name>
+</employee>
+<employee positionsuSalesperson■>
+<name>Jim Smith</name>
+</employee>
+</employees>?
+employees»appendCliiId(<aa3〇E>loyee position=nVice PresidezLt"> <name>Benjaniin Aziderson</name> </en^>loyee>);
+eivployees.prapendChild(<eiBployee p〇8ltioXL»aUser Int«rfac« Design«r"> <nane>Hicbael JohnB〇n</name>
+</eAqployee>);
+employees.insertChildBefore(employees.child(2),
+<einployee p〇8ition=*Human Resources M&nag«r"> <name>Hargaret Jones</aame>
+</exsQloye>);
+employees.aetchildren(<eoployee poaition«"President">
+<naine>Ricbard McMichael</name>
+</employee> +
+<employee positions"Vice PreBident"
+<zuune>Rebecca
+</eaiployee>);
+Q«"Vice I Smith</r
+XMLConstructionExample03. him
+
+19.2 —般用法 557
+以上代码首先在员工列表的底部添加了-个名为Benjamin Anderson的副总统（vicepresident)。然 后，在员:丨:列表顶部又添加了一个名为Michael Johnson的界面设计师。接着，在列表中位置为2的员
+工	此时这个员丁.是Jim Smith,因为他前面还有Michael Johnson和Nicholas C.Zakas	之前又添加
+了一个名为Margaret Jones的人力资源部经理。A4后，所有这巧子兀素都被总统Richard McMichael和副 总统Rebecca Smith替代。结果XML如下所示。
+<employees>
+<employee position="President•>
+<name>Richard McMichael</name>
+</employee>
+<employee position=*Vice President">
+<name>Rebecca Smith</name>
+</employee>
+</employees>
+熟练运用这些技术和方法，就能够使用E4X执行任何DOM风格的操作。
+19.2.5解析和序列化
+E4X将解析和序列化数据的控制放在了 XML构造函数的一些设置当中。与XML解析相关的设置有 如下三个。
+ignoreComments:表示解析器应该忽略标记中的注释。默认设置为true。
+ignoreProcessinglnstrucCions:表乃<解析器应该忽略标记中的处理指令。默认设置为true。 Q ignorewhitespace:表示解析器应该忽略兀素间的空格，而不是创建表现这些空格的文本节
+点。默认设置为 true〇
+这5个设置会影响对传人到XML构造函数中的字符串以及XML字面量的解析。
+另外，与XML数据序列化相关的设置有如下两个。
+prettylndent:表不在序列化XML时，每次缩进的空格数童。默认值为2。
+口 prettyPrinting:表示应该以方便人类认读的方式输出XML,即每个元素重起一行，而且子 元素都要缩进。默认设置为true。
+这两个设置将影响到toString ()和toXMLString 的输出。
+以上五个设置都保存在settings对象中，通过XML构造闲数的settings ()方法可以取得这个对 象，如下所示。
+
+
+
+var settings = XML.settingsO ;
+alert(settings.ignoreWhitespace);
+alert(settings.ignoreComments);
+//true
+//true
+ParsmgAndSerializationExample01.htm
+通过向setSettingsO方法中传人包含全部5项设置的对象，可以一次性指定所有设置。在需要 临时改变设置的情况下，这种设置方式非常W用，如下所示。
+var settings = XML.settings();
+XML.prettylndent = 8;
+XML.ignoreComments = false;
+19
+
+558 第 19 章 E4X
+//执行莱些处理
+XML.setSettings(settir.gs) ;	//f 置前面的设丑
+而使W defauUSettings <)方法则可以取得一个包含默认设置的对象，因此任何时候都可以使用 下面的代码柬《设畀。
+XMIi*setSettings (XML-defaultiSettings () };
+19.2.6命名空间
+E4X提供了方便使用命名空间的特性。前面矜经讨论过，使W na：T;SpaCe(>方法吋以取得与特定前 缀对应的Namespace对象。而通过使川setNamespace(>并传人Namespace对象，也nj"以为给定兀 素设a命名空间。来ft下面的例了。
+var iressages = <messages>
+<rfiessage>Hello world!</message>
+</messages>?
+messages.setNaroespace(new Namespace("wrox", "http：//
+
+www.wrox.com/">);
+调用setNamespaceU方法后，相应的命名空间只会应用到调用这个方法的元素。此时，序列化 messages变M会得到如卜结果。
+<wrox：messages xmins ：wrox-"ht.tp： //www. wrox.com/">
+<message>Hello world!</message>
+</wrox：messagfis>
+^见，由于调用f setNamespace()方法，cmessages/'TC^^i'/ wrox命名空间前缀，而 <message/;^U>K*则没办变化。
+如果只想添加一个命名空间卢明，而不想改变元素，可以使用addNameSpaCe〇方法并传人 Namespace对象，如下面的例T所?Kd
+messages.addNamcspace(new Namespace("wrox", ■
+
+http://www.wrox.com/”）;
+在将这行代码府川于职先的<messageS/>元素时，就会创违如下所示的XML结构。
+<messages xir.lns: wrox-"http： //
+
+www.wrox. com/">
+<message>Hel lo world i < /rr.essage>
+</messages>
+调川removeNamespaceO方法并传人Namespace对象，n]*以移除表不特定命名空间前缀和LIRI 的命名空间卢明;注意，必须传人丝毫不差的表示命名空间的Namespace对象。例如：
+messages.removeKeu-nespace (now Namespace {"wrox", "http： //
+
+www.wrox.cow/"));
+这行代码呵以移除wrox命名空间。不过，引用前缀的限定名不会受影响。
+冇两个力•法丨叮以返丨卩11作点相关的Namespace对象的数组：namespaceDeclarat:ions()和 inScopeNamespaces ()。前者返W在给定节点上声明的所有命名空间的数组，后者返凹位于给定节点 作州域中（即包括在节点身和祖先元索中卢明的）所祚命名空间的数组。如下面的例T所示：
+var messages = 〈messages xmlns：wrox-"http：//
+
+www.wrox.com/">
+<message>Heilo world!</mossage>
+</messages>;
+
+19.3其他变化 559
+alert(messages.namespaceDeclarations());	//"http：//
+
+www.wrox.com"
+alert(messages.inScopeNajnespaces(});	//", 
+
+http://www.wrox.com"
+alert(messages.message.namespaceDeclarations(>)?	//"*
+alert(messages.message.inScopeNamespaces());	//”，http://www.wrox.com*
+这里，<raessages/>元素在调用namespaceDeclarations ()时，会返回包含•一个命名空间的数组， 而在调用inScopeNamespacesO时，则会返回包含两个命名空间的数组。作用域中的这两个命名空间， 分别是畎认命名空间（由空字符串表示）和wrox命名空间。在<meSSage/>元素h调用这些方法时， namespaceDeclarations ()，会返回一个空数组，而inScopeNamespaces ()方法返回的结果与在 cmessages/〉元素上调用时的返回结果相同。
+使用双腎号（：：）也可以基于Namespace对象来査询XML结构中具有特定命名空间的元素。例 如，要取得包含在wrox命名空间中的所有<meSSage/>元素，可以参考下面的代码。
+var messages = <messages xmlns：wrox-"
+
+http://www.wrox.com/">
+<wrox：message>Hello world!</message>
+</messages>;
+var wroxNS = new Namespace(■wrox*# "
+
+http://www.wrox.com/")?
+var wroxMessages = messages.wroxNS:rmessage;
+这里的双冒号表示返回的元素应该位于其中的命名空间。注意，这里使用的是JavaScript变贵，而 不是命名空间前缀。
+还可以为某个作用域中的所有XML对象设置默认命名空间。为此，要使用default: xml namespace 语句，并将一个Namespace对象或一个命名空间URI作为值赋给它。例如：
+default xml namespace = "
+
+http://www.wrox.com/";
+function doSomething(){
+//只为这个朵数设置默认的命名空间
+default xml namespace = new Namespace("your", "http://www.yourdomain.com");
+在doSomething (>函数体内设置默认命名空间并不会改变全局作用域中的默认XML命名空间。 在给定作用域中，当所有XML数据都需要使用特定的命名空间时，就可以使用这个语句，从而避免多 次引用命名空间的麻烦。
+19.3其他变化
+为了与ECMAScript做到无缝集成，E4X也对语言基础进行了一些修改。其中之一就是引人了 for-each-in循环，以便迭代遍历每一个属性并返冋属性的值，如下面的例子所示。
+var employees = <employees>
+<employee position="Software Engineer"> <name>Nicholas C. Zakas</naroe> </employee>
+〈employee positions"Salesperson"> <name>Jiin Smith</name>
+</employee>
+</employees>;
+19
+
+560 第 19 章 E4X
+for each (var child in employees){
+alert(child.CoXKLString())?
+>
+ForEachInExampleOI.htm
+在这个例子的for-each-in循环中，<emp3Loyees/;^每个子节点会依次被赋值给child变量， 其中包括注释、处理指令和/或文本节点。要想返间特性节点，则耑要对-个由特性节点组成的XMLList 对象进行操作，如下所示。
+for each (var attribute in employees.®*) { //遍历特性 alert(attribute);
+>
+虽然for-each-in循环是在E4X中定义的，但这个语句也可以用于常规的数组和对象，例如:
+var colors s ["red","green",•blue"]? for each(var color in colors){ alert(color);
+ForEachInExampleOl.htm
+对于数组，for-each-in循环会返回数组中的每一项。对于非XML对象，这个循环返回对象每个 属性的值。
+E4X还添加了•十全局函数，名叫isXMLNameO。这个函数接受一个字符串，并在这个字符串是 元素或特性的冇效内部名称的情况K返冋true。在使用未知卞符串构建XML数据结构时，这个病数可 以为开发人员提供方便。来看下面的例子。
+alert (isXMI,NamG( "color") );	//true
+alert (isXMI^Namet "hello world"));	//false
+如果你不确定某个字符串的来源，乂需要将该字符串用作-个内部名称，那么最好在使用它之前 先通过isXMLName <)检测一下是否有效，以防发生错误。
+E4X对标准ECMAScript的最后一个修改是typeof操作符。在对XML对象或XMLList对象使用 这个操作符时，typeof返回字符串"xml"。■(曰.在对•其他对象使用这个操作符时，返回的都是"object”， 例如：
+var xml = new XML(); var list = new XKLListO; var object = {);
+alert(typeof xml); //"xml" alerc(typeof list); //•xml" alert (typeof object) ; / /"object*'
+多数悄况下，都没有必要区分XML和XMLList对象。在E4X中，这两个对象都被看成足基本数据 类型.因而也无法通过instanceof操作符来将它们区分开来。
+19.4全面启用E4X
+鉴于E4X在很多方面给标准JavaScript带来;-不同，因此Firefwc在默认情况下只培用E4X中与其
+
+19.5 小结 561
+他代码能够相安无事的那些特性。要想完整地启用E4X,需要将<SCriPt>标签的type特性设置为 Mtext/javascript;e4x=ln,
+<script type="tcxt/javascript;e4x=l" src=■e4x_file.js*></script>
+在打开这个“开关”之后，就会全面启用E4X，从而'能够正确地解析嵌人在E4X字面最中的注释 和CData片段。在没有完整启用E4X的情况下使用注释和/或CData片段会导致语法错误。
+##  19.5 小结
+E4X是以ECMA-357标准的形式发布的对ECMAScript的-个扩展。E4X的H的是为操作XML数 据提供与标准ECMAScript更相近的语法。E4X具有下列特征。
+- [ ] 与DOM不同，E4X只用一个类铟来表示XML中的各种节点。
+- [ ]  XML对象中封装了对所有节点都有用的数据和行为。为表现多个节点的集合，这个规范定义了 XMLList 类塾。
+口另外两个类型，Namespace和QName,分别表现命名空间和限定名。
+为便于査询XML结构，E4X还修改了标准了的ECMAScript语法，修改的地方如下。
+- [ ] 使用两个点（..）表示要匹配所有后代元素，使用@字符表示应该返回一或多个特性。
+- [ ] 星号字符（* )是一个通配符，可以匹配任意类型的节点。
+- [ ] 所有这些査询都可以通过一组执行相同操作的方法来实现。
+到2011年底,Firefox还是唯一一个支持E4X的浏览器。尽管没冇其他浏览器提供商承诺会实现E4X, 但在服务器上，由了• BEA Workshop for WebLogic和Yhaoo! YQL的推动，E4X E经取得了不小的成功。

@@ -30,12 +30,12 @@
   - [4.2 jQuery中的动画](chapter4.md#42)
   - [4.3 某视频网站视频展示效果实例](chapter4.md#43)
   - [4.4 小结](chapter4.md#44)
-
+  
 - [第 5 章 jQuery对表单、表格的操作及更多应用](chapter5.md#50)
   - [5.1 表单应用](chapter5.md#51)
   - [5.2 表格应用](chapter5.md#52)
   - [5.3 企业应用](chapter5.md#53)
-	  - [5.31横竖菜单](chapter5.md#531)
+	  - [5.31 横竖菜单](chapter5.md#531)
 	  - [5.32 走马灯](chapter5.md#532)
 	  - [5.33 日历](chapter5.md#533)
 	  - [5.34 精灵技术](chapter5.md#534)
@@ -56,7 +56,7 @@
 	  - [5.49 仿淘宝筛选](chapter5.md#549)
   - [5.13 换背景](chapter5.md#513)
   - [5.9 小结](chapter5.md#59)
-
+  
 - [第 6 章 jQuery与Ajax的应用](chapter6.md#60)
   - [6.1  Ajax的优势和不足](chapter6.md#61)
   - [6.2  Ajax的XMLHttpRequest对象](chapter6.md#61)
@@ -67,7 +67,7 @@
   - [6.7  jQuery中的Ajax全局事件](chapter6.md#61)
   - [6.8  基于jQuery的AJAX聊天程序](chapter6.md#61)
   - [6.9  小结](chapter6.md#61)
-
+  
 - [第 7 章 插件的使用和写法](chapter7.md#70)
   - [7.1  jQuery表单验证插件--Validation](chapter7.md#71)
   - [7.2  jQuery表单插件--Form](chapter7.md#72)

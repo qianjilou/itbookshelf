@@ -1,0 +1,479 @@
+#  第11章 DOM扩展([返回首页](https://github.com/qianjilou/javascript3))
+**本章内容**
+- [ ] 理解 Selectors API
+- [ ] 使用HTML5 DOM扩展
+- [ ] 了解专有的DOM扩展  
+
+p管DOM作为API已经非常完#了，似为了实现更多的功能，仍然会有一些标准或专有的扩 展。2008年之前，浏览器中几乎所有的DOM扩展都是专冇的。此启，W3C着F-将一些已经 成为事实标准的专有扩展标准化并写人规范气中。
+对DOM的两个主要的扩展足• Selectors API (选择符API)和HTML5。这两个扩展都源自开发社区， 而将某些常见做法及API标准化一立是众望所!II。此外，还奵一个不那么引人瞩U的Element Traversal (元素遍历）规范，为DOM添加了一些属性。M然前述两个主要规范（特别是HTML5)已经涵盖了大 量的DOM扩展，0.专有扩展依然存在。本章也会介绍专有的DOM扩展。
+##  11.1 选择符API
+众多JavaScript库中最常用的一项功能，就是根据CSS选择符选择与某个模式匹配的DOM元紊。 实际上，jQuery (www.jqueiy.com)的核心就是通过CSS选择符査询DOM文档取得元素的引丨H,从而 抛开 r getElementByld ()和 getElementsByTagName () 〇
+Selectors AP丨（
+
+www.w3.org/TR/selectors-api/)是由W3C发起制定的…个标准，致力于让浏览器原 牛支持CSS丧询。所有实现这一功能的JavaScript库都会写一个基础的CSS解析器，然后再使用已有的 DOM方法杳询文档并找到匹配的节点。尽管库开发人员在不知疲倦地改进这一过程的性能，但到头来 都只能通过运行JavaScript代码来完成査询操作。时把这个功能变成变成原生API之后，解析和树査询 操作可以在浏览器内部通过编译后的代码来完成，极大地改善了性能。
+Selectors APILevel 1 的核心是两个方法：querySelectorO 和querySelectorAll()。在兼容的浏 览器中，耐以通过Document及Element类53的实例调用它们。目前已完全支持Selectors API Level 1 的浏览器有 HE 8+、Fircfox3.5+、Safari 3.1+、Chrome 和 Opera 10+。
+querySelector ()方法
+querySelectorO方法接收一个CSS选择符，返回与该模式匹配的第一个元紊，如果没有找到四 配的元素，返回null。请看卜‘面的例子。
+//取得body元素
+var body = document.querySelector{"body");
+//取得ID为"rr^Div"的元素
+var nyDiv s document .querySelector ("tinyDiv*);
+//取得类为* selected•的第一个元素
+var selected = document.querySelector{■.selected*); /，'取得类为button •的第一个图像元素
+var img = document .body .querySelector {*irr.g.button");
+SelectorsAPIExample01.htm
+通过Doument类勸调用querySelector U方法时，会在文档元索的范FH内査找匹配的元素。而 通过Element类型调用querySelector)方法时，只会在该元素后代元素的范围内査找匹配的元素〇 CSS选择符可以简单也可以复杂，视情况而定。如果传人了不被支持的选择符，querySelector () 会抛出错误。
+11.1.2 querySelectorAll ()方法
+querySelectorAll()方法接收的参数与querySelector ()方法一样，都是一个CSS选择符，但 返回的是所有匹配的元素而不仅仅是一个元素。这个方法返回的是一个NodeList的实例。
+具体来说，返间的值实际上是带有所有M性和方法的NodeList,而其底层实现则类似于一组元素 的快照，而非不断对文档进行搜索的动态査询。这样实现可以避免使用NodeList对象通常会引起的大 多数性能问题。
+只要传给querySelectorAll )方法的CSS选择符有效，该方法都会返回一个NodeList对象， 而不管找到多少匹配的元素。如果没有找到匹配的元素，NodeList就是空的。
+与 querySelector( 类似，能够调用 querySelectorAll()方法的类型包括 Document、 DocumentFragment 和 Element。下面是儿个例子〇
+//取得某《3：^中的所有611\元素（类似于诉1£1611拍加38丫于39贴爪6(_611\")) var eros = document.getElementById("myDiv").querySelectorAll("em”};
+//取得类为"selected*的所有元素
+var selecteds = document.querySelectorAll(".selected*);
+//取得所有p元素中的所有strong元素
+var strongs = document.querySelectorAll(*p strong");
+SelectorsAPIExample02.htm
+要取得返回的NodeList中的每一个元索，可以使用itemO方法，也可以使用方括号语法，比如: var i, len, strong;
+for (i- 0, len=strongs.length; i  len; i++){
+strong » strongs [i];	//或者 strongs.item(i)
+strong.className = _important•;
+)
+同样与querySelectorU类似，如果传人了浏览器不支持的选择符或者选择符中有语法错误， guerySelectorAl 1 ()会抛出错误。
+11.1.3 matchesSelector ()方法
+Selectors API Level 2规范为Element类型新培f 一个方法mat^chesSel ector ()〇这个方法接收 -个参数，即CSS选择符，如果调用元该选择符匹配，返M true;杏则，返回false。ft例子。
+if (document.body.matchesSelector{"body.pagel")){
+//true
+)
+在取得某个元索引用的情况下，使用这个方法能够方便地检测它是否会被guerySelectorO或 querySelectorAll ()方法返[口 1〇
+截至2011年年中，还没有浏览器支持matchesSelectorU方法;不过，也有一邱实验性的实现。 IE 9+通过 msMatchesSelector ( 支持该方法，Firefox 3,6卞通过 mozMatchesSelector ()支持该方法， Safari5+和Chrome通过webkitMatchesSelector支持该方法。W此，如果你想使用这个方法，最好 是编写-个包装闲数。
+function niatchesSelector (element, selector) { if {e.ement.matchesSelector){
+return element.matchesSelector(selector);
+} else if (element.msMatchesSelector){
+return element.msMatchesSelector(selector);
+} else if (element,m〇2MarchesSelector){
+return element.mozMatchesSeleccor(selector);
+} else if (element.webki^MatchesSelector){
+return element.webkitKatchesSe1cctor{selector);
+} else {
+throw now Error("Not supported.*);
+}
+}
+if (matchesSelector(document.body, "body.pagel")){
+"执行操作
+}
+SelectorsAPIExample03.htm
+##  11.2 元素遍历
+对于元索间的空格，IE9及之前版本不会返间文本节点，而其他所有浏览器都会返囬文本节点。这样, 就导致丫在使用也:^汹^的和firstChild等厲性时的行为不一致。为f弥补这一差兄，而同时又保 持 DOM 规范不变，Element Traversa】规范（
+
+www.w3.oig/TR/EIememTraversal/)新定义了一组属性。 Element Traversal API为DOM元素添加了以下5个M性。
+childElementCount:返回f•兀素（不也括文本节点和注释）的个数。
+口 firstElementChild:指间第一个子兀素;firstChild的兀素版。
+lasLElementChild:指向最后一个十VU素;lastChild的儿素版。
+previousElementSibling:指向前■个同崔兀素;previousSibling 的：;[：索版。
+nextElementSibling:指向AT *个同輩元素;nextSibling 的元索版。
+支持的浏览器为DOM元素添加了这些属性，利用这些元素不必担心空白文本节点，从而可以更方
+便地査找DOM元索丫。
+F面来宥-个例子。过去，要跨浏览器遍历某元素的所有子元素，需要像下面这样写代码。
+```
+var i, len,
+child = element.firstChild;
+while(child != element.lastChild){
+if (child.nodeType == 1) {	//检查是不是元素
+processChild(child);
+}
+child = child.nextSibling;
+}
+```
+而使用mement Traversal新增的元素，代码会更简洁。
+```
+var i, lcn,
+child = element.firstEleroentChild; while(child != element.lastEleroentChild)( processChild(child);	//已知其是元素
+child = child. nextElenicntSibling;
+)
+```
+支持 Element Traversal 规范的浏览器有丨E 9+、Firefox 3.5+、Safari 4+、Chrome 和 Opera 10+。
+##  11.3 HTML5
+对于传统HTML而言，HTML5是一个叛逆。所有之前的版本对JavaScript接口的描述都不过三言 两语，主要篇幅都丨丨丨于定义标记，与JavaScript相关的内容一概交由DOM规范去定义。
+而HTML5规范则ffl绕如何使用新增标记定义了大量JavaScript AP丨。其中一些API与DOM重叠， 定义了浏览器应该支持的DOM扩展。
+(^\ 因为HTML5涉及的面非常广，本节只讨论与DOM节点相关的内容。HTML5的 's^其他相关内容将在本书其他章节中穿插介绍。
+###  11.3.1 与类相关的扩充
+HTML4在Web开发领域得到广泛采用后导致了一个很大的变化，即class属性用得越来越多，一 方面可以通过它为元素添加样式，另一方面还可以用它表示元素的语义。于是，自然就有很多JavaScript 代码会来操作CSS类，比如动态修改类或者搜索文档中具有给定类或给定的一组类的元素，等等。为了 il:开发人员适应并增加对class属性的新认识，HTML5新增了很多API,致力于简化CSS类的用法。
+getElementsByClassName()方法
+HTML5添加的getElementsByClassName (方法是最受人欢迎的一个方法，可以通过document 对象及所卉HTML元素调用该方法〇这个方法最早出现在JavaScript库中，是通过既有的DOM功能实 现的，而原生的实现具有极大的性能优势。
+getElementsByClassName()方法接收一个参数，即一个包含一或多个类名的字符串，返冋带有 指定类的所有元素的NodeList。传入多个类名时，类名的先后顺序不重要。来看下面的例子。
+//取得所有类中包含-username**和"cur rent"的元索，类名的先后顺序无所谓
+var allCurrentUsernaroes = document.getElementsByClassNameCusername current");
+//取得丨D为"TnyDiv"的元素中带有类名"selected••的所有元素
+var selected = document .getElementById( "myDiv*) .getF.lementsByClassNaine "selected");
+调用这个方法时，只有位：P调用元素子树中的元素才会返回。在document对象上调用 getElementsByClassName ()始终会返冋与类名匹配的所有元素，在元素_丨:调用该方法就只会返回后 代元素中匹配的元素。
+使用这个方法可以更方便地为带有某些类的元素添加事件处理程序，从而不必W局限丁-使用ID或标 签名。不过别忘了，因为返冋的对象是NodeList,所以使用这个方法与使用getElementsByTagName ( 以及其他返回NodeLisL的DOM方法都具有同样的性能问题。
+支持 getElementsByClassName()方法的浏览器有 IE9+、Firefox3+、Safari3.1+、Chrome 和 Opera 9.5+0
+classList 属性
+在操作类名时，需要通过className属性添加、刪除和替换类名。因为className中是一个字 符串，所以即使只修改字符串一部分，也必须每次都设®整个字符串的值。比如，以下面的HTML代
+码为例。
+div classs"bd user disabled"..,/div
+这个div元素一共有三个类名。要从中删除一个类名，需要把这三个类名拆开，删除不想要的那 个，然后再把其他类名拼成一个新宇符审。请看下面的例子。
+//删除■•user•类
+//首先，取得类名字符率并拆分成数组
+var classNames = div.className.split(/\s+/);
+//找到要刪的类名 var pos = -1, i,
+len;
+for (i=0, len=classNames.length; i  len; i*+){ if (classNames[i] == "user"){ pos = i; break;
+//删除类名
+classNames.splice(i,1);
+,	//把剩下的类名拼成字符串并重新设置
+div.className = classNames.join("");
+为丫从div元素的class属性中删除-user”，以上这些代码都是必需的。必须得通过类似的算 法替换类名并确认元素中是否包含该类名。添加类名可以通过拼接字符串完成，但必须要通过检测确定 不会多次添加相同的类名。很多JavaScript库都实现了这个方法，以简化这柱操作。
+HTML5新增了一种操作类名的方式，可以让操作更简单也更安全，那就是为所有元索添加 classLisC属性。这个classList属性是新集合类型DOMTokenList的实例。与其他DOM集合类似，
+DOMTokenList有--个表示自d包含多少元素的length属性，而要取得每个元素可以使用item)方 法，也可以使用方括号语法。此外，这个新类型还定义如下方法。
+addwJUe):将给定的字符串值添加到列表中。坤果值已经存在，就不添加了。
+contains{va2ue):表7K列表中是否存在给定的值，如果存在则返回true，否则返冋false。
+remove(value):从列表中删除给定的字符串。
+toggle(va2Ue):如果列表中已经存在给定的值，删除它;如果列表中没有给定的值，添加它。 这样，前面那么多行代码用F面这一行代码就可以代替r:
+div.classList.remove("user*);
+以上代码能够确保其他类名不受此次修改的影响。其他方法也能极大地减少类似基本操作的复杂 性，如下面的例子所示。
+//删除"disabled” 类
+div.classList.remove("disabled");
+//添加• cur rent •类 div.classList.add("current*);
+//切换"user_类
+div.classList .toggle {**user-);
+//确定元素中是否包含既定的类名
+if (div.classList.contains(-bd") && Jdiv.classList.contains("disabled")){
+"执行操作
+//迭代类名
+for (var i=0, len=div.classList.length; i  len; i++){ doSomething(div.classList[i]);
+}
+有了 classList属性，除非你需要全部删除所有类名，或者完全重写元素的class属性.否则也
+就用不到className属性了〇
+支持classList属性的浏览器有Firefox3.6+和Chrome。
+11.3.2焦点管理
+HTML5也添加了辅助管理DOM焦点的功能。首先就是document.activeElement属性，这个 属性始终会引用DOM中当前获得了焦点的元素。元素获得焦点的方式有页面加载、用户输人（通常是 通过按Tab键）和在代码中调用focus (方法。来看几个例子。
+var button = document.getElementByld("myButton"); button.focus();
+alert(document.acciveElement === button); //true
+默认情况下，文档刚刚加载完成时，document.activeElement中保存的是document.body元 索的引用。文档加载期间，document.activeElement的值为null。
+另外就是新增了document.hasFocus(方法，这个方法用于确定文档是否获得了焦点。
+var button = document.getElementByld"myButton");
+
+292 第11章DOM扩展
+button.focus()?
+alert(document.hasFocus()); //true
+通过检测文档是否获得了焦点，可以知道用户是不是正在与页面交互。
+奄询文档获知哪个元素获得了焦点，以及确定文档是否获得/焦点，这闼个功能最*要的用途是提 岛Web应用的无障碍性。无障碍Web应用的一个主要标志就是恰当的焦点管理，而确切地知道哪个元 素获得了焦点是一个极大的进步，至少我们不用再像过去那样靠猜测了。
+实现了这两个属性的浏览器的包括IE4+、Firefox3+、Safari 4+、Chrome和Opera 8+。
+HTMLDocument 的变化
+HTML5扩展了 HTMLDocument,增加了新的功能。与HTML5中新增的其他DOM扩展类似，这些 变化同样基于那些已经得到很多浏览器完美支持的专有扩展。所以.尽管这些扩展被写人标准的时间相 对不长，但很多浏览器很早就已经支持这些功能了。
+readyStata 属性
+IE4最早为document对象引人f readyState属性。然后，其他浏览器也都陆续添加这个属性， 最终HTML5把这个属性纳人了标准巧中。Document的readyState属性有两个町能的值：
+loading,正在加载文朽;
+complete,已经加载完文档。
+使用document.readyState的最恰当方式，就是通过它来实现一个指示文档已经加载完成的指 示器。在这个属性得到广泛支持之前，要实现这样一个指示器，必须借助orU oad事件处理程序设置一 个标签，表明文构已经加载完平。document.readyState属性的基本用法如下。
+if {document.rcadyState == "complete"){
+//执行操作
+}
+支持 readySt:ate 属性的浏览器有 IE4+、Firefox 3.6+、Safari、Chrome和 Opera 9+。
+兼容模式
+Q从IE6开始冈分浪染页面的模式是标准的还是混杂的，检测页面的兼容模式就成为浏览器的必要 功能。丨E为此给document添加r—个名为compatMode的属性，这个厢性就是为了告诉开发人员浏 览器采用了哪种谊染模式。就像下面例子中所展示的那样，在标准模式下，document.compatMode的 值等于"CSSlCompat",而在混杂模式下，document.compatMode 的值等于"BackCompat"。
+if {document.compatModc == "CSSlCompat"){ alert("Standards mode");
+} else {
+alert("Quirks mode");
+}
+后来，陆续实现这个厲性的浏览器有Firefox、Safari3.1+、Opera和Chrome。最终，HTML5也把 这个属性纳人标准，对其实现做出T明确规定。
+head属性
+作为对document.body引用文档的body元素的补充，HTML5新增了 document.head W性， 引用文档的head元素。要弓|用文档的head元素，可以结合使用这个属性和另一种后备方法。
+var head - document.head IJ document.getElementsByTagName("head")10];
+
+11.3 HTML5 293
+如果可用，就使用document:.head,否则仍然使用getElementsByTagName()方法。 实现document. head属性的浏览器包括Chrome和Safari 5〇
+11.3.4字符集属性
+HTML5新增了儿个与文捫字符集有关的属性。其中，charset属性表示文档中实际使用的字符集, 也可以用来指定新字符集。默认情况下，这个属性的值为"UTF-16",但可以通过neta元素、响应头 部或接设置charset属性修改这个值。来看一个例子。
+alert(document.charset); //"UTF-16"
+document.charset = *UTF-8";
+另一个属性是defaultCharset,表示根据默认浏览器及操作系统的设置，当前文档默认的字符集 应该是什么。如果文档没有使用默认的字符集，那charset和defaultCharset属性的值可能会不一 样，例如：
+if (document.charset != document.defaultCharset){
+alert("Custom character set being used.");
+)
+通过这两个属性可以得到文档使用的字符编码的具体信A，也能对字符编码进行准确地控制。运行 适当的情况下，可以保证用户正常查看页面或使用应用。
+支持 document .charset 属性的浏览器有 IE、Firefox、Safari、Opera 和 Chrome。支持 document .defaultcharset 属性的浏览器有 IE、Safari 和 Chrome。
+11.3.5自定义数据属性
+HTML5规定可以为元素添加非标准的属性，但要添加前缀data-, H的是为元素提供与渲染无关的 信息，或者提供语义倍息。这些属性可以任意添加、随便命名，只要以data-开头即可。来看一个例子。
+div id="myDiv" data-appld="12345,' data-myname= "Nicholas-/div
+添加了自定义属性之后，可以通过元素的dataset属性来访问6定义属性的值。dataset属性的 值是DOMStringMap的--个实例，也就是--个名值对儿的映射。在这个映射中，每个data-name形式 的属性都会有一个对应的属性，只不过属性名没有data-前缀（比如，角定义属性是data-myname, 那映射中对应的属性就是myname )。还是看一个例子吧。
+〃本例中使用的方法仅用于演示
+var div = document.gctElementById("myDiv");
+//取得自定义属性的值
+var appld = div.dataset.appld;
+var myName = div.dataset.myname;
+
+
+
+"设置值
+div.dataset.appld = 23456; div.dataset.myname = "Michael";
+//有没有"myname"值呢？ if {div.dataset.myname){
+
+294 第11章DOM扩展
+alert("Hello, " r div.dataset.myname)?
+}
+如采需要给元素添加一些不可见的数据以便进行其他处理，那就要用到自定义数据属性。在跟踪链 接或棍搭应用中，通过0定义数据M性能方便地知道点击来A页面中的哪个部分。
+在编写本书时，支持自定义数据属性的浏览器存Firefox 6+和Chrome。
+11.3.6插入标记
+虽然DOM为操作节点提供r细致入微的控制手段，但在需要给文档插人大M新HTML标记的情况 下，通过DOM操作仍然非常麻烦，因为不仅要创建一系列DOM节点，而R还要小心地按照TE确的顺 序把它们连接起来。相对而言，使用插人标记的技术，直接插人HTML字符串不仅更简单，速度也更 快。以下与插人标记相关的DOM扩展已经纳人了 HTML5规范。
+1. inneirHTML 属性
+在读模式下，innerHTKL属性返回与调用元素的所在子节点（包括元索、注释和文本节点）对应 的HTML标匕在每模式F, irmerHTML会根据指定的值创建新的DOM树，然后用这个DOM树完全 替换调用元索原先的所有子节点。下面足一个例子。
+div id-"content"
+pThis is a strongparagraph/strong with a list following it./p
+ul
+liItem l/li
+liItera 2/li
+liItexr. 3/li
+/ul
+/div
+对于上面的3^元素来说，它的innerHTML属性会返冋如下字符串。
+pThis is a strongparagraph/strong with a list following ic./p
+ul
+liIteir. l/li
+liItem 2/li
+liI：:em 3/li
+/ul
+但是,不同浏览器返间的文本格式会有所不同。IE和Opera会将所有标签转换为大写形式，而Safari、 Chrome和Firefox则会原原本本地按照原先文杓中（或指定这些标签时）的格式返回HTML,包括空格 和缩进。不要指望所有浏览器返M的iimerHTML值完全相N。
+在写模式下，irmerHTML的值会被解析为DOM子树，替换调用元素原来的所有子节点。W为它的 值被认为是HTML,所以其中的所有标签都会按照浏览器处理HTML的标准方式转换为元索（同样， 这里的转换结果也因浏览器而异)。如果设置的值仅是文本而没杳HTML标签，那么结果就是设置纯文 本，如F所示。
+div.inncrHTML = "Hello world!";
+为innerHTML设置的包含HTML的字符串值与解析后innerHTML的值大不相同。来看_F面的 例子。
+div.innerHTML = "Hello & welcome, b\"reader\•!/b";
+
+11.3 HTML5 295
+以丨:操作得到的结果如下：
+div id="content-Hello &eimp; welcome, b&quot;reader&quot; !/bx/div
+设置f innerHTML之后，可以像访问文格中的其他节点一样访问新创建的节点。
+(^\ 为innerHTML设置HTML*"字符串后:浏览器会将这个字符串解析为相应的DOM 树。因此设置了 innerHTML之后，再从中读取HTML字符串，会得到与设里时不一 样的结果原因在于返回的字符串是根据原始HTML字符串创建的DOM树经过序列 化之后的结果。	.
+使用innerHTML属性也有一些限制。比如，在大多数浏览器中，通过innerHTML插人script 元素并不会执行其中的脚本。丨E8及更早版本是唯一能在这种情况下执行脚本的浏览器，但必须满足一 些条件。一是必须为3£^非元素指定defer M性，二是SC!ript元素必须位于（微软所谓的）“有 作用域的元素”（scoped element)之后。script元素被认为是“无作用域的元索”（NoScope element )， 也就是在页tff中肴不到的元素，与31^：1^元素或注释类似。如果通过iimerHTML插人的字符串开头 就是一个“无作用域的元素”，那么IE会在解析这个字符串前先删除该元素。换句话说，以下代码达不 到目的：
+div. innerHTML = "script deferalerL ('hi '} ;\/scripc"; //无效
+此时，innerHTML字符串一开始（而Fl整个）就是一个“无作用域的元素”，所以这个字符串会变 成空字符串。如果想插人这段脚本，必须在前面添加一个“有作用域的元素”，可以是一个文本节点， 也可以是一个没W结束标签的元素如input。例如，F面这几行代码都可以正常执行：
+div.innerHTML = *_script deferalert('hi')?\/script* ?
+div. innerHTMI. = *div&nbsp;/divxscript deferalert ('hi ') ;\/script* ;
+div.innerHTML = "input type=\ *hidderi\"xscript deferalert {'hi *) ;\/script";
+第一行代码会元素前插人一个文本节点。事后，为了不影响页面显示，你可能需要移 除这个文本节点。第二行代码采用的方法类似，只不过使用的是一个包含非换行空格的div元素。如 果仅仅插人一个空的div元素，还是不行;必须要包含一点儿内容，浏览器才会创建文本节点。同样, 为了不影响页面布局，恐怕还得移除这个节点。第三行代码使用的是一个隐藏的inputK，也能达到 相同的效果。不过，由于隐藏的11^^：域不影响页面布局，因此这种方式在大多数情况下都是首选。 大多数浏览器都支持以直观的方式通过innerHTML插人style兀素，例如：
+div.innerHTML = "style type=\"text/css\"body {background-color: red; }/style*;
+但在IE8及更早版本中，Style&是一个“没有作用域的元素”，因此必须像F面这样给它前置 一个“有作用域的元素”：
+11
+div.innerHTML = "_style type=\Htext/css\"body {background-color: red; )/style"; div.removeChiId(div.firstChild);
+并小足所有元素都支持innerHTML M性; 不支持innerHTML的兀素有：col、colgroup、 frameset、head、html、style、t:able、tbody、thead、tfoot^tr0 此 外，在1E8及更早版本中，title兀索也没有innerHTML属性。
+
+296 第11章DOM扩展
+Firefox 对在内容类型为 application/xhtml+xml 的 XHTML 文档中设置 innerHTMIj
+有严格的限制。在XHTML文档中使用inr.erHTML时，XHTML代码必须完全符合
+要求。如果代码格式不正确，设置innerHTML将会静默地失敗。
+无论什么时候，只要使用innerHTML从外部插人HTML，都应该首先以可靠的方式处理HTML。 IE8为此提供了 window.toStaticHTMM)方法，这个方法接收一个参数，EU. •个HTML字符串;返问 --个经过无害处理后的版本——从源HTML中删除所有脚本节点和事件处理程序属性。下面就是一个 例子：
+var text = *a href=\"#\* onclick=\"alert('hi')\MClick Me/a";
+var sanitized = window.toStaticHTML(text);	//Internet Explorer 8 only
+alert(sanitized);	//"a href=\"#\"Click Me/a"
+这个例子将一个HTML链接字符串传给了 t〇StaticHTML(方法，得到的无害版本中去掉了 onclick属性。虽然目前只有IE8原生支持这个方法，但我们还是建议读者在通过innerHTML插人代 码之前，尽可能先手工检査一下其中的文本内容。
+2. OUterHTML 属性
+在读模式下，outerHTML返回调用它的元素及所存子节点的HTML标签。在写模式下,outerHTML 会根据指定的HTML字符串创建新的DOM子树，然后用这个DOM子树完全替换调用元素。下面是一 个例子。
+
+
+
+div id="content*
+pThis is a strongparagraph/strong with a list following it./p ul
+liItem l/li 2/li liItem 3/li /ui
+/div
+OuterHTMLExample01.htm
+如果在div元素上调用outerHTML,会返回与上面相同的代码，包括div:本身。不过，由于浏 览器解析和解释HTML标记的不同，结果也可能会有所不同。（这里的不同与使用innerHTML属性时 存在的差异性质是•样的。）
+使用outerHTML属性以下面这种方式设置值：
+div.outerHTML = "pThis is a paragraph./p,;
+这行代码完成的操作与下面这些DOM脚本代码一样： var p = doctunent .createElement ("p");
+p.appcndChild(document.croateTextNode("This is a paragraph.-)); div.parentNode.replaceChild(p, div);
+结果，就是新创建的p元索会取代DOM树中的div元索。
+支持outerHTML属性的浏览器有IE4+、Safari 4+、Chrome和Opera 8+。Firefox 7及之前版本都不 支持outerHTML属性。
+
+11.3 HTML5 297
+inaertAdjacentHTOM)方法
+插人标记的最后一个新增方式是insertAdjacentHTML U方法。这个方法最早也是在IE中出现的， 它接收两个参数：插人位置和要插人的HTML文本。第•个参数必须是下列值之一：
+-beforebegin•，在当前元素之前插人一个紧邻的同辈兀素;
+"afterbegin•，在当前元素之下插人个新的+元素或在第一个子元素之前再插人新的子元素;
+"beforeend-.在当前元岽之下插人一个新的子元素或在最后一个子元素之后再插人新的子元素;
+"afterend•，在当前元素之后插人一个紧邻的同辈元素。
+注意，这些值都必须是小写形式。第二个参数是一个HTML字符串（与innerHTML和outerHTML 的值相同），如果浏览器无法解析该字符串，就会抛出错误。以下是这个方法的基本用法示例。
+//作为前一个同辈元素插入
+element. insertAdjacentHTML( "beforebegin", '*pHello worldt/p");
+//作为第一个子元素杨入
+element. insertAdjacentHTML{ *afterbegin,', "pHello w〇rld!/p") ?
+//作为最后一个子元素抽入
+element. insertAdjacentHTML (■beforeer.d* # "pHello world!/p*) ';
+//作为后一个同辈元索插入
+element.insertAdjacentHTML("afterend", "pHello world!/pw)?
+支持insertAdjacentHTML()方法的浏览器有IE、Firefox8+、Safari、Opera和Chrome。
+内存与性能问题
+使用本节介绍的方法替换子节点可能会导致浏览器的内存占用问题，尤其是在IE中，问题更加明 M。在删除带有事件处理程序或引用了其他JavaScript对象子树时，就有可能导致内存占用问题。假设 某个元素有-个事件处理程序（或者引用了 -个JavaScript对象作为属性)，在使用前述某个属性将该元 素从文档树中删除后，元素与亊件处理程序（或JavaScript对象）之间的绑定关系在内存中并没有一并 删除。如果这种情况频繁出现，贞面占用的内存数童就会明显增加。因此，在使用irmerHTML、 outerHTML属性和insertAdjacentHTML( 方法时，好先手工删除要被替换的元素的所有事件处理 程序和JavaScript对象届性（第丨3章将进一步讨论事件处理程序)。
+不过，使用这几个属性一•别是使用irmerHTML,仍然还是可以为我们提供很多便利的。一般 来说，在插人大量新HTML标记时，使用imierHTML属性与通过多次DOM操作先创建节点再指定它 们之间的关系相比，效韦要高得多〇这是因为在设置innerHTML或outerHTML时,就会创建一个HTML 解析器。这个解析器是在浏览器级別的代码（通常是编写的）基础上运行的，因此比执行JavaScript 快得多。不可避免地，创建和销毁HTML解析器也会带来性能损失，所以最好能够将设置innerHTML 或outerHTML的次数控制在合理的范围内。例如，下列代码使用innerHTML创建了很多列表项：
+for (var i=0# len-values.length; i  len; i++){
+ul.innerHTML += -li_ + values[i] + "/li-; //要避免这种頻繁操作！！
+
+这种每次循环都设®—次innerHTML的做法效率很低。而且，每次循环还要从innerHTML中读 取一次信息，就意味着每次循环要访问两次innerHTML。最好的做法是单独构建字符串，然后再一次 性地将结果字符串陚值给irmerHTML,像下面这样：
+var itemsHtml * ■";
+
+298 第11章DOM扩展
+for (var i=0, len-values.length; i  len; i*+)f itemsHtml +=	+ values [1] + "/li**;
+)
+ul.innerHTML s itemsHtml;
+这个例子的效率要高得多，因为它只对innerHTML执行了一次赋值操作。
+scroll IntoView( 方法
+如何滚动页面也是DOM规范没有解决的一个问题。为了解决这个问题，浏览器实现了一些方法， 以方便开发人员更好地控制页面滚动。在各种专有方法中，HTML5最终选择了 scrollIntoViewO作 为标准方法。
+scrollintoViewO可以在所有HTML元索上调用，通过滚动浏览器窗口或某个容器元素，调用 元素就可以出现在视n中。如果给这个方法传人true作为参数，或者不传人任何参数，那么窗口滚动 之后会让调用元素的顶部与视口顶部尽可能平齐。如果传人false作为参数，调用元素会尽可能全部 出现在视口中，（可能的话，调用元素的底部会与视n顶部平齐。）不过顶部不一定平齐，例如：
+//让元素可见
+document.forms[0].scrollIntoView ;
+当页面发生变化时，一般会用这个方法来吸引用户的注意力。实际上，为某个元素设置焦点也会导 致浏览器滚动并显示出获得焦点的元素。
+支持 scrollIntoView()方法的浏览器有 IE、Firefox、Safari 和 Opera。
+11.4专有扩展
+里然所有浏览器开发商都知晓坚持标准的重要性，但在发现某项功能缺失时，这些开发商都会一如 既往地向DOM中添加专有扩展，以弥补功能上的不足。表面上看，这种各行其事的做法似乎不太好， m实际上专有扩展为Web开发领域提供了很多重要的功能，这些功能最终都在HTML5规范中得到了标 准化。
+即便如此，仍然还冇大量专有的DOM扩展没有成为标准。但这并不是说它们将来不会被写进标准， 而只是说在编写本书的吋候，它们还是专有功能，而R只得到了少数浏览器的支持。
+11.4.1文档模式
+IE8引人了一个新的概念叫“文档模式"（documentmode)。页面的文档模式决定了可以使用什么功 能。换句话说，文档模式决定了你可以使用哪个级別的CSS,可以在JavaScript中使用哪些API,以及 如何对待文裆类型（doctype)。到了	总共有以下4种文档模式。
+ IE5:以混杂模式渲染页面（IE5的默认模式就是混杂模式)。IE8及更高版本中的新功能都无法 使用。
+1E7:以丨E7标准模式渲染页面。IE8及更高版本中的新功能都无法使用。
+IE8:以丨E8标准模式渲染页面。IE8中的新功能都可以使用，因此nj•以使用Selectors API、更多 CSS2级选择符和某些CSS3功能，还有一些HTML5的功能。不过1E9中的新功能无法使用。
+IE9:以1E9标准模式渲染页面。IE9中的新功能都可以使用，比如ECMAScript5、完整的CSS3 以及更多HTML5功能。这个文档模式是最高级的模式。
+
+11.4专有扩展 299
+要理解IE8及更高版本的工作原理，必须理解文档模式。
+要强制浏览器以某种模式渲染贞面.可以使用HTTP头部信息X-UA-Compatible,或通过等价的 meta标签来设置：
+meta http-equivs^X-UA-Compatible" concent*'IEsIEVersion"
+注意，这里IE的版本（iEVersion )苻以下一些+同的值，而且这些值并不一定与h述4种文档 模式对应。
+Edge:始终以最新的文档模式来渲染页面。忽略文档类型声明。对于IE8,始终保持以IE8标 准模式渲染页面。对于IE9,则以IE9标准模式渲染页面。
+EmulateiE9:如果有文档类型声明，则以1E9标准模式渲染页面，否则将文档模式设置为IE5。
+EmulatelES:如果有文杓类型声明，则以IE8标准模式®染页面，杏则将文档模式设置为IE5。
+ExnulatelE?:如果有文捫类型声明，则以IE7标准模式渲染页面，否则将文档模式设置为IE5。 口 9:强制以IE9标准模式渲染页面，忽略文档类铟卢明。
+8:强制以IE8标准模式渲染页面，忽略文档类■声明。
+7:强制以IE7标准模式渲染页面，忽略文档类型声明。
+5:强制将文II模式设置为IE5,忽略文挡类型卢明。
+比如，要想让文档模式像在IE7中一样，可以使用下面这行代码：
+meta http-equiv "X-UA-Compatible" content="IE=EmulateIE7B
+如果不打算考虑文忾类型声明，而直接使用1E7标准模式，那么可以使用下面这行代码：
+meta http-equivs^X-UA-Compatible" content="IE=7■
+没有规定说必须在页面中设置X-UA-Compatible。默认情况下，浏览器会通过文档类型声明来确 定是使用最佳的可用文档模式，还是使用混杂模式。
+通过document.documentMode属性可以知道给定面使用的是什么文們模式。这个属性是[E8 中新增的，它会返回使用的文档模式的版本号（在IE9中，可能返回的版本号为5、7、8、9): var mode = document.documentMode?
+知道页面采用的是什么文档模式，有助于理解页面的行为方式。无论在什么文档模式下，都可以访 问这个属性。
+children 属性
+由于1E9之前的版本与其他浏览器在处理文本节点中的空白符时有差异，因此就出现T children 厲性。这个属性是HTMLCollection的实例，只包含元素中同样还是元素的子节点。除此之外， children属性与childNodes没有什么K別，即在元素只包含元素子节点时，这两个属性的值相同。 下面是访问children属性的示例代码：
+var childCount = element.children.length; var firstchild = element.childrenlOJ;
+支持 chi ldren 属性的浏览器有 IE5、Firefox 3.5、Safari 2 (但有 bug )、Safari 3 (完全支持）、Opera8 和Chrome (所有版本)。IE8及更早版本的children属性中也会包含注释节点，但IE9之后的版本则 只返回元素节点。
+
+300 第11章DOM扩展
+contains ()方法
++在实际开发中，经常需要知道某个节点是不足另一个节点的后代。IE为此率先引人了 contains ( 方法，以便不通过在DOM文档树中杏找即吋获得这个信息。调用contains ()方法的应该是祖先节点， 也就足搜索开始的节点，这个方法接收一个参数，即要检测的后代节点。如果被检测的节点是后代节点， 该方法返回true;否则，返凹false。以下是一个例子：
+alert, (document.documentElenent.contains(document.body)}; //true
+这个例子测试Tbody元素是不是html元索的后代，在格式正确的HTML页面中，以上代码返 回 truec 支持 contains 〇 方法的浏览器有 IE、Firefox9+、Safari、Opera和 Chrome〇
+使用00^!^^13 0：〇1^3^〇〇：咖61^?〇811：1〇11()也能够确定节点间的关系。支持这个方法的浏 览器有IE9+、Firefox、Safari、Opera9,5十和Chrome。如前所述，这个方法用于确定两个节点间的关系， 返M—个表示该关系的位掩码（bitmask)。下表列出了这个位掩码的值。
+为模仿contains ()方法，应该关注的足掩码16。可以对compare3ocumenl_Position()的结果 执行按位与，以确定参考节点（调compareDocumentPositiont)方法的当前节点）是否包含给定 的节点（传人的节点)。来看下面的例丫•：
+var result = document.document Element.compareDocumentPos i tion(document.body); alert (! ! (result & 16";
+执行上而的代码后，结果会变成20 (表示“居后”的4加上表示“被包含”的16)。对掩码16执 行按位操作会返冋一个非零数值，而两个逻辑非操作符会将该数值转换成布尔值。
+使用一些浏览器及能力检测，就可以写出如下所示的一个通用的contains函数：
+function contains(refNoae, otherNoae}{
+O
+;	if (typeof refNode. contains == " function" &&
+(	(!client.engine.webkit II client.engine.webkit = b22)){
+return refNode.contains(otherNode);
+} else if (typeof refNode.compareDocumentPosition == "function"){
+return !!(refNode.compareDocumentPosition(otherNode) & 16;
+ else {
+var node = otherNode.parentNode;
+do {
+if (node === refNode){
+return true;
+ else {
+node = node.parentNode;
+ while (node J»= null};
+
+11.4专有扩展 301
+}
+return false;
+ContainsExample02.htm
+这个函数组合使用了三种方式来确定-个节点是不是另-个节点的后代。函数的承一个参数是参考 节点，第二个参数是要检査的节点。在函数体内，首先检测refNode中是否存在contains U方法（能 力检测）。这一部分代码还检査了3前浏览器所用的WebKit版本号。如果方法存在而且不是WebKit ([client .engine.webkit),则继续执行代码。否则，如果浏览器是WebKit且至少是Safari3(WebKit 版本号为522或更离），那么也可以继续执行代码。在WebKit版本号小于522的Safari浏览器中， contains ( r方法不能正常使用。
+接下来检夹是许存在compareDocumentPositionU方法，而函数的最后一步则是自otherNode 开始向h遍历DOM结构，以递归方式取得parentNode,并检査其是否与refNode相等。在文档树的 顶端，parentNode的值等于null, T是循环结束。这是针对旧版本Safari设计的一个后备策略。
+11.4.4插入文本
+前囱介绍过，丨E原来专有的插人标记的属性innerHTMI,和outerHTML已经被HTML5纳人规范。 但另外两个插人文本的专有W性则没有这么好的运气。这两个没有被HTML5看中的属性是innerText 和 outerTexto
+innerText 厲性
+通过innertText屈性可以操作元素中包含的所有文本内容，包括子文档树中的文本。在通过 irmerText读取值时，它会按照由浅人深的顺序，将子文档树屮的所宥文本拼接起来。在通过 imierText写人值时，结果会删除元素的所杳子节点，插人包含相应文本值的文本节点。来看下面这 个HTML代码示例。
+
+
+
+d.iv id-"content"
+pThis is a strongparagraph/stror»g with a list following it./p
+ul
+liItem l/li
+liItem 2/li
+liItero 3/li
+/ul
+/div
+InnerTextExampleOI.htm
+对于这个例子中的div元素® S ,其innerText属性会返回下列字符串:
+This is a paragraph with a list following it.
+Item 1 Item 2 ICem 3
+由于不冋浏览器处理空闩符的方式不同，因此输出的文本可能会也可能不会包含原始HTML代码 中的缩进。
+使用irmerText属性设罝这个div元素的内容，贝lj只需一行代码：
+
+
+
+302 第11章DOM扩展
+
+
+
+div. inr.erText = "Hello world!";
+InnerTextExampie02.htm
+执行这行代界后，贝面的HTML代码就会变成如下所示。
+div id="content"Hello world!/div
+设置innerText属性移除了先前存在的所有子节点，完全改变了 DOM子树。此外，设置innerText 属性的N时，也对文本中存在的HTML语法字符（小f号、大于号、引号及和号）进行了编码。再看 ?个例子3
+div.innerText = "Hello & welcome, b\"reader\"!/b";
+InnerTextExampie03.htm
+运行以上代码之后，会得到如下所示的结果。
+div id="content"Hello &amp; welcome/ Sflc?b&gt;&quot;reader&qu〇C;!&lt;/b&gt;/div
+设R irmerText永远只会生成当前节点的一个子文本竹点，而为了确保只生成一个子文本节点， 就必须要对文本进行HTML编码。利用这一点，可以通过innerText域性过滤掉HTML标签。方法是 将innerText设置为等于innerTexL,这样就可以去掉所有HTML标签，比如：
+div.innerText = div.innerText;
+执行这行代码后，就用原来的文本内容替换了容器元索中的所有内容（包括子节点，W而也就去掉 了 HTML 标签)。
+支持innerTexL M性的浏览器包括IE4+、Safari 3+、Opera 8+和Chrome。Hrefox虽然不支持 innerText,但支持作用类似的textContent属性。textContent是DOMLeve丨3规定的一个M性，其 他支持textContentiS性的浏览器还^| IE9+、Safari 3+、Opera 10+和Chrome。为了确保跨浏览器兼 容，有必要编写一个类似于下面的函数来检测可以使用哪个屈性。
+function getlnnerText(element){
+return (typeof element.textContent == "string") ? element.textContenc ： element.innerText;
+}
+function setlnnerText(element, text){
+if (typeof element.textContent == "string*){ element.textContent = text?
+} else {
+clement.innerText a text;
+
+
+
+fnnerTextExample03.htm
+这两个函数都接收一个元索作为参数，然后检查这个元素是不是有textContent属性。如果有， 那么Lypeof element.textContent应该是-string-;如果没有，那么这两个函数就会改为使用 innerText:。可以像下面这样调用这两个函数。
+
+11.4专有护展	303
+setlnnorText (div, *I{ello world! •);
+alert(getlnnerText(div));	//"Hello world!"
+使用这两个函数可以确保在不同的浏览器中使用正确的属性。
+0
+实际上，innerText与textContent返回的内容并不完全一样。比如，
+innerText:会忽略行内的样式和脚本，而textContent则会像返回其他文本一样返
+西行内的样式和脚本代码。避免跨浏览器兼容问题的最佳途径，就是从不包含行内样
+式或行内脚本的DOM子树副本或DOM片段中读取文本。
+2. outerText 属性
+除了作用范围扩大到了包含调用它的节点之外，cmterText与innerText基本上没有多大区别。 在读取文本值时，outerText与innerText的结果完全一样。但在写模式F, outerText就完全不 丨口1 了 ： outerText不只是替换调用它的元素的子节点，而是会替换整个元素（包括子节点)。比如： div.outerText ^ "Hello world!■;
+这行代码实际h相当于如F两行代码：
+var text = document.createTextNode("Hello worl^!"); div.parentNode.replaceChiId(text# div);
+本质上，新的文本节点会完全取代调用outerText的元素。此后，该元素就从文档中被删除，无 法访问。
+支持〇此61^6乂1:属性的浏览器有1£4+、331^3+、（!^113 8+和〇11〇11^。由于这个属性会导致调用 它的元素+存在，闪此并不常用。我们也建议读者尽可能不要使用这个属性。
+11.4.5 滚动
+如时所述，HTML5之前的规范并没有就与页面滚动相关的API做出任何规定。但HTML5在将 SCr〇].lInt〇View()纳人规范之后，仍然还有其他几个专有方法可以在不同的浏览器中使用。下面列出 的几个方法都是对HTMLElement类型的扩展，W此在所有元素中都可以调用。
+scrollIntoViewifNeeciedfaJigrnCenter):只在3前兀素在视口中不可见的情况下，才滚 动浏览器窗口或容器元素，最终让它可见。如果当前元素在视口中可见，这个方法什么也不做。 如果将可选的digncenter参数设置为true,则表示尽馈将元素显示在视口中部(垂直方向）。 Safari和Chrome实现了这个方法。
+scrollBy!ines(2ineCount):将兀素的内容滚动指定的行髙，■ZineCount值可以是正值， 也可以总负值。Safari和Chrome实现了这个方法。
+scrollByPagesfpagreCount):将元素的内容滚动指定的贝面高度，具体高度由元素的高度决 定。Safari和Chrome实现了这个方法。
+希银大家要注意的足，scrolllntoViewU和scrollIntoViewlfMeeded ()的作用对象是元素的 容器，而scrollByLines()和scrollByPages()影响的则楚元素自身。下面还是来看几个示例吧。
+//将頁面主体滾动5行
+document .body. scrol iByliines (5);
+//在当前元素不可见的时候，让它进入洌览器的视口 document.images JO).scrollIntoViewIfNeeded();
+//将页面主体往铒滚动1页 document.body.scrollByPages(-1);
+由于scrolllntoviewf)足-唯一一个所有浏览器都支持的方法，因此还是这个方法最常用。
+###  11.5 小结
+虽然D0M为与XML及HTML文交互制定了一系列核心AP丨，似仍然有几个规范对标准的DOM 进行了扩展。这些扩展中有很多原来M浏览器专有的，何后来成为了車实标准，于是其他浏览器也都提 供了相M的实现。本章介绍的=£个这方ifii的规范如下。
+- [ ] Selectors AP丨，定义丫两个方法，让开发人员能够基TCSS选择符从DOM中取得元索，这两个 方法是 querySelector ()和 querySelectorAll ()。
+- [ ] Element Traversal,为DOM元索定义了额外的属性，让开发人M能够史方便地从一个元素跳到 }一个元索。之所以会出现这个扩展，是W为浏览器处理D0M元素间空卩|符的方式不一样。
+- [ ] HTML5,为标准的DOM定义丫很多扩展功能。K中包括在innerMTML厲性这样的事实标准基 础上提供的标准定义，以及为筲理焦点、设置字符集、滚动页面而规定的扩展API。
+M然R前DOM扩展的数ft还不多，但随着Web技术的发展，相倍一定还会涌现出更多扩展来。很 多浏览器都在试验P有的扩展，而这些扩展一旦获得认可，就能成为“伪”标准，甚至会被收录到规范 的更新版本中。  
+[上一章](https://github.com/qianjilou/javascript3/blob/master/chapter/chapter10.md)&emsp;&emsp;[下一章](https://github.com/qianjilou/javascript3/blob/master/chapter/chapter12.md)

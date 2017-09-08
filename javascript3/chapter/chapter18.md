@@ -1,0 +1,677 @@
+##  第18章 JavaScript与XML([返回首页](https://github.com/qianjilou/javascript3))
+**本章内容**
+- [ ] 检测浏览器对XML DOM的支持
+- [ ] 理解 JavaScript 中的 XPath
+- [ ] 使用XSLT处理器  
+
+几何时，XML—度成为存储和通过因特网传输结构化数据的标准。透过XML的发展，能够 田清晰地看到Web技术发展的轨迹。DOM规范的制定，不仅是为了方便在Web浏览器中使用 XML,也是为了在桌面及服务器应用程序中处理XML数据。此前，由于浏览器无法解析XML数据， 很多开发人员都要动手编写自己的XML解析器。而自从DOM出现后，所有浏览器都内置了对XML的 原生支持（XMLDOM),同时也提供了一系列相关的技术支持。
+18
+18.1浏览器对XML DOM的支持
+在正式的规范诞生以前，浏览器提供商实现的XML解决方案不仅对XML的支持程度参差不齐， 而且对同一特性的支持也各不相同。DOM2级是第一个提到动态创建XML DOM概念的规范。D0M3 级进一步增强了 XMLDOM,新增了解析和序列化等特性。然而，当D0M3级规范的各项条款尘埃落 定之后，大多数浏览器也都实现了各自不同的解决方案。
+DOM2 级核心
+我们在第 12章曾经提到过,DOM2级在 document. implementation 中引人了 createDocument () 方法。IE9+、Firefox、Opera、Chrome和Safari都支持这个方法。想一想，或许你还记得可以在支持DOM2 级的浏览器中使用以下语法来创建一个空白的XML文档：
+var xmldom = document.implementation.createDocuinent(namespaceUri, root, doctype); 在通过JavaScript处理XML时，通常只使用参数root,因为这个参数指定的是XMLDOM文档元 索的标签名。而namespaceUri参数则很少用到，原因是在JavaScrip中管理命名空间比较困难。最后， doctype参数用得就更少了。
+因此，要想创建一个新的、文档元素为r〇〇t^JXML文样，可以使用如下代码：
+var xmldom
+document.implementation.createDocument(■", "root", null);
+//•root"
+alert(xmldom.documentElement.tagNam©);
+var child = xmldom.createElement("child"};
+xmldom.documentElement.appendChiId(chiId);
+DOML€vel2CoreExampleOI. him
+522	第丨8 章 JavaScript 与 XML	
+这个例子创建了-个XMLDOM文档，没存默认的命名空间，也没有文档类型。但要注意的是，尽 管不需要指定命名空间和文档类®，也必须传人相应的参数。具体来说，给命名空间URI传人一个空字 符串，就意味若未指定命名空间，而给文档类型传人null,就意味着不指定文档类型。变量xmldorn 中保存着一个DOM2级Document类型的实例，带有第12章讨论过的所有DOM方法和属性。我们这 个例子显示了文档元索的标签名，然后又创建并给文档元素添加了一个新的子元素。
+要检测浏览器是否支持DOM2级XML,可以使用下面这行代码：
+var hasXmlDom = document.implementation.hasFeature("XML", "2.0");
+在实际开发中，很少需要从头开始创建•个XML文档，然后再使用DOM文档为其添加元素。更 常见的情况往往是将某个XML文档解析为DOM结构，或者反之。由于DOM2级规范没有提供这种功 能，因此就;li现了一些事实标准。
+DOMParser 类型
+为了将 XML解析为 DOM 文档，Firefox 引入'fDOMParser 类型;后来，IE9、Safari、Chrome 和 Opera也支持了这个类型。在解析XML之前，首先必须创建一个DOMParser的实例，然后再调用 parseFromStringO方法。这个方法接受两个参数：要解析的XML字符串和内容类型（内容类型始 终都应该是"text/xml")。返回的值是一个Document的实例。来看下面的例子。
+var parser = new DOMParser();
+var xmldom = parser.parseFromString(*rootxchild/>/root>"/ •text/xml");
+alert(xroldom.documentElement.tagName);	//"root*
+alert (xmldom.documenuEloment. firstChild.tagName) ;	/"child"
+var anotherChild = xmldom.createElement{"child"); xmldom.documentElemeat.appendChild(anotherChild);
+var children = xmldom.getElementsByTagName("child"); alert(children.length);	//2
+DOMParserExampleOLhtm
+在这个例子中，我们把一个简单的XML字符串解析成了一个DOM文档。解析得到的DOM结构以 ^〇^>作为其文档元素，该元素还有一个child>子元素。此后，就可以使用DOM方法对返回的这个 文档进行操作了。
+DOMParser只能解析格式良好的XML，因而不能把HTML解析为HTML文档。在发生解析错误 时，仍然会从parseFromStringO中返回一个Document对象，但这个对象的文档元索是 parsererr〇r>,而文档元素的内容是对解析错误的描述。下面是一个例子。
+parsererror xmlns="http：//
+
+www.mozilla.org/newlayout/xml/parsererror.xml">XML Parsing Error： no element found Location： file： / //I： /My%2〇Writing/^%2〇Books/
+Professional%20JavaScript/Second%2〇Edition/Examples/Chl5/DOMParserExample2.htm Line Number 1, Column 7： sourcetext> & It;root & gt;	/v/sourcetext >  /parsererror>
+Firefox和Opera都会返回这种格式的文构。Safari和Chrome返回的文档也包含parsererror>元素， 但该元素会出现在发生解析错误的地方。IE9会在调用parseFromStringO的地方抛出一析错误。 由于存在这些差别，因此确定是否发生解析错误的最佳方式就是，使用一个try-catch语句块，如果没
+
+
+
+
+
+
+
+
+
+18.1浏览器对XML DOM的支持 523
+有错误，则通过getElementsByTagNaine()来査找文档中是否存#parsererror>兀素，如下面的例 子所示〇
+var parser = new DOMParserU, xmldom, errors; try {
+xinldom = parser .parseFromString ("root>", "text/xml"); errors = xmldom.getElementsByTagName("parsererror"); if (errors.length > 0){
+throw new Error"Parsing error!");
+}
+} catch (ex) {
+alert("Parsing error!•);
+这例子显示，要解析的字符串中缺少了闭标签/r〇〇t>,而这会导致解析错误。在IE9+中，此时会 抛出错误。在Firefox和Opera中，文构兀素将是口3136^^:〇1'>,而在Safari和Chrome中， parsererror>firoot>W第一个子元素。调用 getElementsByTagName ("parsererror ” 能够 应对这两种情况。如果这个方法返回了元素，就说明有错误发生，继而通过一个警告框M示出来。.当 然，你还可以更进一步，从错误元素中提取出错误信息。
+XMLSerializer 类型
+在引入DOMParser的同时，Firefox还引人了 XMLSerializer类型，提供了相反的功能：将DOM 文钓序列化为XML字符串。后来，IE9+、Opera、Chrome和Safari都支持了 XMLSerializer。
+要序列化DOM文档，首先必须创建XMLSerializer的实例，然后将文档传人其serializeTo- String ()方法，如下面的例子所示。	.
+但是，serializeToStringU方法返问的字符串并不适合打印，W此看起来会显得乱糟糟的。 XMLSerializer可以序列化任何冇效的DOM对象，不仅包括个别的节点，也包括HTML文档。 将HTML文档传人serializeToString(>以后，HTML文档将被视为XML文约，因此得到的代码也 将是格式良好的。
+18.1.4旧8及之前版本中的XML
+事实上，IE是第一个原生支持XML的浏览器，而这一支持是通过ActiveX对象实现的。为了便于 桌面应用程序开发人员处理XML,微软创建了 MSXML库;但微软并没有针对JavaScript创建不同的对
+
+
+
+var serializer = new XMLSerializer();
+var xml = serializer.seriali2eToString(xmldom);
+alert(xml);
+
+
+
+
+
+
+如果将非DOM对象传入serializeToStringU ,会导致销■误发生。
+
+524 第 18 章 JavaScript 与 XML
+象，而只是if: Web开发人员能够通过浏览器访问相同的对象。
+第8$铃经介绍过ActiveXObject类锻，通过这个类型可以在JavaScript中创建ActiveX对象的 实例。同样，要创建一个XML文档的实例，也要使用ActiveXObject构造函数并为其传人一个表示 XML文档版本的字符串。有6种不同的XML文档版本可以供选择。
+口 Microsoft.XmlDom:最初随同IE发布;不建议使用。
+MSXML2.D0MDOCument:为方便脚本处理而更新的版本，建议仅在特殊情况下作为后备版本 使用。
+MSXML2 . DOMDocument. 3 • 0:为了在JavaScript中使用，这是最低的建议版本。
+MSXML2.DOKDocument.4.0:在通过脚本处理时并不可靠，使用这个版本可能导致安全瞥告。
+MSXML2.DOMDocument.5.0:在通过脚本处理时并不可靠，使用这个版本同样可能导致安全 警ft。
+MSXML2 . DOMDocument. 6.0:通过脚本能够可靠处理的最新版本。
+在这 6 个版本中，微软只推荐使用 MSXML2 . DOMDocument. 6.0 或 MSXML2 . DOMDocument;. 3.0; 前者是最新最可靠的版本，而后者则是大多数Windows操作系统都支持的版本。可以作为后备版本的 MSXML2 .DOMDocument,仅在针对IE5.5之前的浏览器开发时才有必要使用。
+通过尝试创建每个版本的实例并观察是否有错误发生，可以确定哪个版本可用。例如：
+
+
+
+function createDocument(){
+if
+(typeof arguments.callee.activeXString !=
+var versions = ("MSXML2.DOMDocument.6.0*,
+-MSXML2.DOMDocument■],
+i, len;
+string"){
+"MSXML2.DOMDocument
+〇'
+for (i=0,len=versions.length; i  len; i++){ try {
+new ActiveXObject(versionsli】）;
+arguments.callee.activeXString = versions[i】;
+break;
+> catch (ex){
+//踺过
+return new ActiveXObject(arguments.callee.activeXString)?
+}
+IEXmlDomExampleOl. htm
+这个闲数中使用for循环迭代了每个能的ActiveX版本。如果版本无效，则创建新 ActiveXObject的调用就会抛出错误;此时，catch语句会捕获错误，循环继续。如果没有发生错误， 则可用的版木将被保存在这个函数的activeXString属性中。这样，就不必在每次调用这个函数时都 重复检査可用版本了——直接创建并返间对象即可。
+要解析XML字符串，首先必须创建一个DOM文档，然后调用loadXMLO方法。新创建的XML 文档完全是-个空文档，因而不能对其执行任何操作。为loadXKLO方法传人的XML字符串经解析之 后会被填充到DOM文档中。来看下面的例子。
+
+18.1浏览器对XML DOM的支持	525
+var xmldom = createDocument{); xmldom. loadXML {Hrootxchild/x/root>");
+alert(xmldom.documentElement.tagName);	//"root"
+alert(xmldom.documentElement.fi rstChild.tagName);	//"chi Id"
+var anotherChild = xmldom.createElement(■child")? xmldom.documentElement.appendChild(anotherChiId);
+var children = xmldom.getElementsByTagName("child*); alert(children.length);	//2
+iEXmlDomExampleQl.htm
+在新DOM文档中填充了 XML内容之后，就可以像操作其他DOM文档一样操作它了（可以使用任 何方法和属性）。
+如果解析过程中出错，可以在parseError属性中找到错误消息。这个属性本身是一个包含多个属 性的对象，每个属性都保存着有关解析错误的某一方面信息。
+errorCode:错误类型的数值编码;在没有发生错误时值为0。
+filePos.•文件中导致错误发生的位置。
+line:发生错误的行。
+linepos:发生错误的行中的字符。
+reason:对错误的文本解释。
+srcText:导致错误的代码。
+url:导致错误的文件的URL (如果有这个文件的话)。
+另夕卜，parseError的valueOf()方法返回errorCode的值，因此可以通过下列代码检测是否发 生了解析错误。
+if (xmldom.parseError != 0)(
+alert("Parsing error occurred.");
+>
+错误类型的数值编码可能是正值，也可能是负值，W此我们只需检测它是不是等于0。要取得有关 解析错误的详细信息也很容易，而且可以将这些信息组合起来给出更有价值的解释。来看下面的例子。
+if (xmldom.parseError != 0){
+alert(NAn error occurred:\nZrror Code:" xmldom.parseError.ezxorCode + "\n"
+"Line： " * xsddom.parseError.line + "\n"
++ "Line Pos： ** + xmldos&.parseError.linepoa +
+"Reason： • + xmldcm.parseError.reason);
+"\n"
+IEXmlDomExample02. htm
+应该在调用loadXMLO之后、査询XML文档之前，检査是否发生了解析错误。
+序列化XML
+IE将序列化XML的能力内置在了 DOM文档中。每个DOM节点都有一个xml属性，其中保存着 表示该节点的XML字符串。例如：
+alert (xmldom.xml);
+
+526 第 18 章 JavaScript 与 XML
+文档中的每个节点都支持这个简单的序列化机制，无论是序列化整个文档还是某个子文档树，都非 常方便。
+2.加载XML文件
+IE中的XML文挡对象也可以加载来服务器的文件。与DOM3级中的功能类似，要加载的XML 文档必须与页面中运行的JavaScript代码来自同一台服务器。同样与D0M3级规范类似，加载文档的方 式也可以分为M步和异步两种。要指定加载文档的方式，可以设ft async属性，true表示异步，false 表示同步（默认值为true )。来看下面的例子。
+var xmldora = createDocument();
+xmldom.async = false;
+在确定了加载XML文档的方式后，调用load (>可以启动F载过程。这个方法接受一个参数，即 要加载的XML文件的URL。在同步方式下，调用load (>后可以立即检测解析错误并执行相关的XML 处理，例如：
+var xmldom = createDocumenc()? xmldom.async = false; xznldom.load( "exasqple.xml");
+if (xmldom.parseError 1= 0)(
+//处理嫌误 )else {
+alert (xmldom.docuunentBlexnent»tagKame) ? //"root"
+alert (xmldo&.docuxnentBleinent.firatChild.tagName); //"child"
+var anotherChild = xizildom^createBlement ("child"); xzaldom. documentElement. appendChild (anoth«rChild);
+var children s xmldom.getBlementsByTagNaBe"child"); alert(cbildren.length);	//2
+alert (xmldom.xml);
+IEXmlDomExample03.htm
+由于是以N步方式处理XML文件，因此在解析完成之前，代码不会继续执行，这样的编程工作要 简单一点。虽然同步方式比较方便，佴如果下载时间太长，会导致程序反应很慢。因此，在加载XML 文档时，通常都使用异步方式。
+在#步加载XML文件的情况下，需要为XML DOM文档的onreadystatechange事件指定处理 程序。有4个就绪状态（ready state )。
+- [ ] 丨：DOM正在加载数据。
+2: DOME经加载完数据。
+3: DOMLI经可以使用，但某些部分4能还无法访问。
+4: DOM已经完全可以使用。
+在实际开发中，要关注的只有一个就绪状态：4。这个状态表示XML文件已经全部加载完毕，而且 L2经全部解析为DOM文档。通过XML文档的readyState属性可以取得其就绪状态。以异步方式加 载XML文f|'•的典型模式如下。
+
+18.1浏览器对XML DOM的支持 527
+var xmldom = createDocument(); xmldom.async » true;
+xmldoan»onready8tatechange a function ) {
+if
+(xmldom.readyState es 4) if acmldcxin.parseError !s 〇) {
+alert("An error occurred:\nBrror Coda:"
+xmldom.paraeError.errorCode ♦ "\nw "Line: " + xnldozn.paraeBrz'or.line * ”\n" "Line Poe： "	xzoldom.parseError.linapos
+"Raaaon： _ 4 xmldom.parseError.reason);
+else
+"\n#
+alert (xmldon.docuaentBlement.tagNeune); //"root"
+alert(xmldOB.documentBlement.firBtChild.tagNama); //"child"
+var anotherChlld ® xmldom.createBleaent("child"); xmldom.docunentEleaent.appendChild(anotherChild);
+var children s xmldom^getElementsByTagNamfl(nchlldM); alert(children.length);	//2
+>?
+alert (xmldoa.xml);
+xmldom.load("exaxople*xml");
+IEXmlDomExample04. htm
+要注意的是，为onreadystatechange事件指定处理程序的语句，必须放在调用load)方法的 语句之前;这样，才能确保在就绪状态变化时调用该事件处理程序。另外，在事件处理程序内部，还必 须注意要使用XML文档变量的名称（xmldom ),不能使用this对象。原因是ActiveX控件为预防安全 问题不允许使用this对象。当文档的就绪状态变化为4时，就可以放心地检测是否发生了解析错误， 并在未发生错误的情况下处理XML 了。
+
+虽然可以通过XMLDOM文档对象加栽XML文件，但公认的还是使用XMLHttp- Request对象比较好。有关XMLHttpRequest对象及Ajax的相关内容，将在第21 章讨论。
+18.1.5跨浏览器处理XML
+很少有开发人员能够有福气专门针对一款浏览器做开发。因此，编写能够跨浏览器处理XML的阐 数就成为了常见的霈求。对解析XML而言，F面这个闲数吋以在所有四种主要浏览器中使用。
+function parseXmlxrol){ var xmldom = null;
+if (typeof DOMParser 1= "undefined-){
+xmldom = (new DOMParser()).parsePromScring(xml, "text/xml");
+18
+
+528 第丨 8 章 JavaScript 与 XML
+var errors = xmldom.gecElementsByTagNama("parsererror"); if (errors.length){
+throw new Error("XML parsing error：" + errors[0].textContent)?
+} else if (typeof ActiveXObject !^ "undefined*){ xxnldom = createDocument () ? xnldom.loadXKL(xml); if (xmldom.parseError i = 0){
+throw new Error("XML parsing error： * + xmldom.parseError.reason);
+} else {
+throw new Error("No XML parser available.");
+return xmldom;
+}
+CrossBrowserXmlExampIe01.htm
+这个parseXmlO阐数只接收一个参数，即可解析的XML字符串。在函数内部，我们通过能力检 测来确定要使用的XML解析方式。DOMParser类型是受支持最多的解决方案，因此首先检测该类型是 否有效。如果是，则创建一个新的DOMParser对象，并将解析XML字符串的结果保存在变量xmldom 中。由于DOMParser对象在发生解析错误时不抛出错误（除IE9+之外)，因此还要检测返间的文档以 确定解析过程是否顺利。如果发现了解析错误，则根据错误消息抛出一个错误。
+函数的最后一部分代码检测了对ActiveX的支持，并使用前卤定义的createDocument: 〇函数来创 建适当版本的XML文档。与使用DOMParser时一样，这里也需要检测结果，以防有错误发生。如果 确实有错误发生，同样也需要抛出一个包含错误原W的错误。
+如果上述XML解析器都不nj用，函数就会抛出一个错误，表示无法解析T。
+在使用这个函数解析XML字符串时，应该将它放在try-catch语句当中，以防发生错误。来看 下面的例子〇
+var xmldoro = null;
+try {
+xmldom s parseXml (*rootxchild/x/root>");
+} catch (ex){
+alert(ex.message);
+}
+//进一步处理
+CrossBrowserXmlExample01.htm
+对序列化XML而言，也可以按照同样的方式编写一个能够在四大浏览器中运行的函数。例如：
+function seriali2eXml(xmldom){
+if (typeof XMLSerializer != "undefined"){
+return (new XMLSerializer()).serializeToString(xmldom)?
+} else if (typeof xmldom.xml != •undefined"){
+
+18.2浏览器对XPath的支持 529
+return xmldom.xml;
+} else {
+throw new ErrorCCould not serialize XML DOM.");
+}
+CrossBrowserXmiExample02.htm
+这个serializeXml (>函数接收一个参数，即要序列化的XML DOM文约。与parseXml (>函数 —样，这个阐数f先也是检测受到最广泛支持的特性，即XMLSerializer。如果这个类型有效，则使 用它来生成并返回文档的XML字符串。由于ActiveX方案比较简单，只使用了一个xml属性，因此这 个函数直接检测了该属性。如果上述两方面尝试都失败函数就会抛出一个错误，说明序列化不能进 行。一般来说，只要针对浏览器使用了适当的XMLDOM对象，就不会出现无法序列化的情况，因而也 就没有必要在try-catch语句中调用serial izeXml (>。结果，就只需如下一行代码即可：
+var xml = seriaii2eXml(xmldom);
+只不过由于序列化过程的差异，相同的DOM对象在不同的浏览器下，有可能会得到不间的XML 字符串。
+18.2浏览器对XPath的支持
+XPath是设计用来在DOM文档中査找节点的一种手段，因而对XML处理也很重要。但是，D0M3 级以前的标准并没有就XPath的API作出规定;XPath是在DOM3级XPath模块中首次跻身推荐标准行 列的。很多浏览器都实现了这个推荐标准，何IE则以tld的方式实现了 XPath。
+DOM3 级 XPath
+DOM3级XPath规范定义了在DOM中对XPath表达式求值的接n。要确定某浏览器是否支持DOM3 级XPath,可以使用以下JavaScript代码：
+var support sXPath = document. implementation .hasFeature ("XPath-, "3.0”;
+在DOM3级XPath规范定义的类型中，最重要的两个类型是XPathEvaluator和XPathResult。 XPathEvaluator用于在特定的上K文中对XPath表达式求值。这个类型有下列3个方法。
+createExpression(expression, nsreso2ver>:将 XPath表达式及相应的命名空间信息转 换成--个XPathExpression,这是丧询的编译版。在多欢使用同一个查询时很有用。
+createNSResolver (no3e> :根据node的命名空间信息创建一个新的XPathNSResolver对 象。在基了•使用命名空间的XML文杓求值时，游要使用XPathNSResolver对象。
+evaluate (expression, context, nsresolver, type, result)：在给定的上下文中， 基于特定的命名空间信息来对XPath表达式求值。剩下的‘参数指定如何返回结果。
+在 Firefox、Safari、Chrome和 Opera 中，Document 类型通常都是与 XPathEvaluator 接口一起实 现的。换句话说，在这些浏览器中，既可以创建XPathEvaluator的新实例，也可以使用Document 实例中的方法（XML或HTML文档均是如此)。
+在上面这三个方法中，evaluateU是最常用的。这个方法接收5个参数：XPath表达式、上下文
+
+530 第 18 章 JavaScript 与 XML
+节点、命名空间求解器、返冋结果的类型和保存结果的XPathResult对象（通常是null,因为结果 也会以函数值的形式返M)。艽屮，第三个参数（命名空间求解器）只在XML代码中使用了 XML命名 空间时有必要指定;如果XML代码中没有使用命名空间，则这个参数应该指定为null。第四个参数(返 回结果的类型）的取值范围是下列常fl之一。
+XPathResult.ANY_TYE>E:返冋与XPath表达式7?配的数据类型。
+XPathResult.NUMBER_TY?E:返N数值。
+XPathResult.STRING_TYPE:返回字符串值。
+XPathResult.BOOLEANJTYPE:返回布尔值。
+XPathReSult.UNORDERED_NODE_ITERATOR_TYPE:返rnl匹配的 15■点集合，但集合中节点的次 序不一定与它们在文杓中的次序一致。
+XPathResult.ORDERED_NODE_ITERATOR_TYPE:返15丨匹配的节点集合，集合中节点的次序与 它们在文档中的次序一致。这是最常用的结果类型。
+XPathResult.UNORDERED_NODE_SNAPSKOT_TYPE:返M节点集合的快照，由于是在文档外部 捕获节点，因此对文档的后续操作不会影响到这个节点集合。集合中节点的次序不一定与它们 在文档中的次序…致。
+XPathResult.ORDERED_MODE_SNAPSHOT_TYPE:返回节点集合的快照，由于是在文档外部捕 获节点，因此对文档的后续操作不会影响到这个节点集合。集合中节点的次序与它们在文档中 的次序一致。
+XPathResult.ANY_UNORDERED_NODE_TYPE:返回匹配的节点集合，但集合中节点的次序不 一定与它们在文档中的次序一致。
+XPathResult.FIRST_ORDERED_NODE_TYPE:返回只包含--个节点的节点集合，包含的这个 节点就是文档中第一个匹配的货点。
+指定的结果类型决定了如何取得结果的值。下面来看一个典型的例子。
+var result xmldom.evaluate("employee/nane", xmldom.documentElement, null,
+XPathResult.ORDERED_N〇〇E_ITERATOR_TYPE, null);
+if (result i== null) {
+var node = result.iterateNext(); while(node) {
+alert(node.tagName); node = node.iterateNext();
+DomXPathExampleOLhtm
+这个例子中为返回结果指定的是XPathResult .ORDERED_NODE_ITERATOR_TYPE，也是最常用的 结果类期。如果没有节点匹配XPath表达式,evaluate ()返问null;否则，它会返回一个XPathResult 对象。这个XPathResult对象带有的属性和方法，可以用来取得特定类型的结果。如果节点是一个节 点迭代器，尤论是次序一致还是次序不一致的，都必须要使用iterateNext ()方法从节点中取得匹配 的节点。在没有更多的匹配节点时，iterateNext U返回mall。
+如果指定的是快照结果类铟（不管足次序一致还是次序不一致的），就必须使用snapshotltemO 方法和snapshotLength属性，例如：
+
+18.2浏览器对XPath的支持 531
+var result = xmldom.evaluate(',employee/name',/ xmldom.documentElement, null,
+XPathReSUlt.ORDERED—N〇DE_SNAPSHOT一TYPE, null);
+if (result !== null) {
+for (var i*0, lensresult.snapshotLength; i  len; i++) { alert(result.8napsh〇tltem(i).tagName);
+DomXPathExample02.htm
+这里，snapshotLength返N的是快照中节点的数It,而snapshotltemf)则返回快照中给定位 置的节点（与NodeList中的length和item ()相似)0 1.单节点结果
+指定常+量XPat：hResult.FIRST_ORDERED_NODE_TYPE会返间第一个匹配的节点，可以通过结果 的singleNodeValue属性来访问该节点。例如：
+
+
+
+var result = xmldom.evaluate("employee/name", xmldom.documentBlement, null,
+XPathHeault.PIHST_0RDBRJED_N0DB_TYPE, null) I
+18
+if (result J-- null) {
+alert (result • singleNodeValue. tagNaane);
+DomXPathExample03. htm
+与前面的査询一样，在没有匹配节点的情况evaLuate{)返HrmU。如果有节点返W,那么就 可以通过singleNodeValue属性来访问它。
+2.简单类型结果
+通过XPath也可以取得简单的非节点数据类®，这时候就要使用XPathResuit的布尔值、数值和 字符串类型了。这几个结果类型分别会通过booleanValue、numberValue和stringValue属性返 冋一个值。对于布尔值类型，如果至少有一个节点与XPath表达式闪配，则求值结果返回true,否则 返回false。来看下面的例子。
+var result = xmldom.evaluate("employce/name", xmldom.documentElement, null,
+XPathResult.BOOLEAN_TYPE, null);
+alert(result.booleanValue);
+DomXPatkExample04.htm
+在这个例子中，如果有节点哎配"employee/naraeM,则booleanValue属性的值就是true。 对于数值类型，必须在XPath表达式参数的位置上指定一个能够返回数值的XPath函数，例如计算 与给定模式匹配的所有节点数量的count ()。来看下面的例子。
+var result = xmldom.evaluate("count(employee/name)•, xmldom.documentSIement
+null, XPathResult.NUMBER 一 TYPE, null);
+alert(result.numberValue);
+DomXPathExampleOS. htm
+以上代码会输出与，employee/naine"PQ配的节点数量（即2 )。如果使用这个方法的时候没有指定 与前例类似的XPath函数，那么numberValue的值将等于NaN。
+
+
+
+532 第 18 章 JavaScript 与 XML
+对于字符串类型，evaluate(>方法会査找与XPath表达式匹配的第一个节点，然后返间其第一个 子节点的值（实际上是假设第-个子节点为文本节点)。如果没有匹配的节点，结果就是-个空字符串。 来看一个例T'-。
+
+
+
+var result = xmldom.evaluate("employee/nane", xmldom.documentElement,
+XPathResult,STRING_TYP3, null);
+alert(result.stringValue);
+null,
+DomXPathExample06.htm
+这个例子的输出结果中包含着与"element/name”^配的第一个元素的第--个子节点中包含的字 符串。
+3.默认类型结果
+所有XPath表达式都会ft动映射到特定的结果类塑。像前面那样设置特定的结果类型，可以限制表 达式的输出。而使用XPathResult.ANY_TYPE常童可以自动确定返冋结果的类型。一般来说，fl动选 择的结果类型对能是布尔值、数值、字符串值或一个次序不一致的节点迭代器。要确定返回的是什么结 果类型，可以检测结果的resultType属性，如下面的例子所示。
+var result = xmldom.evaluate(*employee/name", xmldom.documentElement, null,
+ZPathResult.ANY_TYPB, null);
+if (result !== null) {
+switch(result.resultType) {
+case XPathResult.STRiNO.TYPE:
+//处攻字符申类兔 break;
+c&se XPathResult,MUKBBR_TYPE:
+//处《数值类塑 bre&k;
+case XFathHesult.8O0LEAN_TrPEt //处攻亨尔值类型 break;
+case ZPathResult.unorderbd_node_itbrator_typb： //处理次序不一致的节A遑代器矣整 bre&k;
+default:
+//处*其他可齙的结果矣炎
+S然，XPathReSult.ANY_TYPE可以让我们更灵活地使用XPath,但是却要求有更多的处理代码 来处理返回的结果。
+命名空问支持
+对于利用了命名空间的XML文忾，XPathEvaluator必须知道命名空间信息，然后才能正确地进 行求值。处理命名空间的方法也不止一种。我们以下面的XML代码为例。
+
+18.2浏览器对XPath的支持 533
+?xml version="1.0" ?>
+wrox ： books xmlns: wrox= "htCp: / /www. wrox. cor./" >
+wrox：book>
+wrox：title>Professional JavaScript for Web Developers/wrox：tic.le> wrox：author>Nicholas C. Zakas/wrox：author>
+/wrox：book>
+wrox:book>
+wrox：ticle>Professional Ajax/vn:ox：title>
+wrox：author>Nicho 1 as C. ZaJcas/wrox:author>
+wrox:author>Jeremy KcPeak/wrox：author>
+wrox：author>Joe Fawcett/wrox：author>
+/wrox：book>
+/wrox：books>
+在这个XML文朽中，所有兀素定义都来自http:/ /www. wrox. com/命名空间，以前缀wrox标识。 如果要对这个文档使用XPath,就需要定义要使用的命名空间;否则求值将会失败。
+处理命名空间的第一种方法是通过createNSResolver()来创建XPathNSResolver对象。这个 方法接受一个参数，即文档中包含命名空间定义的节点。对丁•前面的XML文档来说，这个节点就是文 档元素wrox:books>，它的xmlns特性定义jf命名空间。可以把这个节点传递给creadeNS- Resolver U ,然后可以像下面这样在evaluate ()屮®用返R的结果。
+var nsreso丄ver = xmlciom.createNSResolver(xn\l3om.document:Element);
+var result - xmldom.eva1uate("wrox：book/wrox：author",
+xmldoir. document Element, nsresolver,
+XPathResult.ORDERED_N〇DE_SNAPSHOT_TYPE, null);
+alert(result.snapshotLength)j
+DomXPathExampleO 7, htm
+在将nsresolver对象传人到evaluate ()之后，就可以确保它能够理解XPath表达式中使用的 wox前缀。读者可以试一试使用相同的表达式，如果不使用XPathNSResolver的话，就会导致错误。
+处理命名空间的第二种方法就是定义一个函数，让它接收•-个命名空间前缀，返N关联的URI, 例如：
+var nsresolver 雪 function (prefixH switch(prefix){
+case "wrox": return "
+
+http://www.wrox.com/";
+//其他前緩
+>
+);
+var result = xmldom.evaluate("count(wrox：book/wrox：author)",
+xmldom.documentElementf nsresolver, XPathResult.NUMBER_TYPE/ null};
+alert (result .munberVa丄ue} ?
+DomXPathExampk08.htm
+在不确定文档中的哪个节点包含命名空间定义的情况下，这个命名空间解析函数就可以派上用场 了。只要你知道前缀和URI,就可以定义一个返间该信息的威数，然后将它作为第三个参数传递给 evaluate ()即口J〇
+18
+
+534 第 18 章 JavaScript 与 XML
+IE 中的 XPath
+IE对XPath的支持是内置在基T ActiveX的XMLDOM文档对象中的，没冇使用DOMParser返回 的DOM对象。因此，为了在IE9及之前的版本中使用XPath,必须使用基于ActiveX的实现。这个接 口在每个节点上额外定义r两个的方法：selectSingleNode)和selectNodes)。其中， selectSingleNode ()方法接受一个XPath模式，在找到四配节点时返回第一个匹配的节点，如果没有 找到闪配的节点就返[;"丨mill。例如：
+var element = xrr.ldon.aocumentElement. selectiSingleNode ("employee/name");
+if {element i== null){ alerc(element.xml);
+lEXPathExampleOl. htm
+这里，会返问匹配"employee/naroe•'的第一个节点。上下文节点是xmldom.documentElement， W此就调用丫该节点上的selectSingleKodeU。由于调用这个方法可能会返闽null值，因而有必 要在使用返回的节点之前，先检査确定它不是null。
+另一个方法selectNodes 〇也接收一个XPath模式作为参数，但它返回与模式匹配的所有节点的 NodeList(如果没有匹配的节点，则返回一个包含零项的NodeList)。来看下面的例子。
+var elements = xmldom.docuraentElement .selectNodes ("employee/narne*); alert{elements.length)?
+IEXPathExample02. htm
+对这个例子而言，PU配”employee/name-的所有冗素都会通过NodeList返回。由T■不可能返间 null值，因此可以放心地使用返冋的结果。但要记住，既然结果是NodeList,而其包含的元素可能 会动态变化，所以每次访问它都有可能得到不同的结果。
+IE对XPath的支持非常简单。除丫能够取得一个节点或一个NodeList外，不可能取得其他结果 类型。
+IE对命名空间的支持
+要在丨E中处理包含命名空间的XPath表达式，你必须知道A己使用的命名空间，并按照下列格式 创建一个字符串：
+"xmlns：prefixl='aril' xmlns：prefix2='uri2' xmlns：prefix3= *uri3'•
+然后，必须将这个字符串传人到XMLDOM文档对象的特殊方法set Property U中，这个方法接 收两个参数：耍设置的®性名和属性值。在这M,属性名应该是"SelectionNamespaces■，属性值就 足按照前而格式创建的字符串。下面来看一个在DOM XPath命名空间中对XML文档求值的例子。 xmldom.setPropertySelectionNamespaces", "xmlns:wrox= ^http：//
+
+www.wrox.com/#")?
+var result = xroldom.documencElement.selectNodes("wrox：book/wrox：author"); alert(result.length)?
+fEXPathExampleG3.htm
+
+18.2浏览器对XPath的支持 535
+对于这个DOM XPath的例子来说，如果不提供命名空间解析信息，就会在对表达式求值时导致一
+个错误，
+18.2.3跨浏览器使用XPath
+鉴IE对XPath功能的支持有限，W此跨浏览器XPath只能保证达到IE支持的功能。换句话说， 也就是要在其他使用DOM3级XPath对象的浏览器中，重新创建selectSingleNodeO和 selectNodes)方法。第一个函数是selectSingleNodeU,它接收三个参数：上下文节点、XPath 表达式和可选的命名空间对象。命名空间对象应该是下面这种字面量的形式。
+{
+prefixl: "uril", prefix2： ”uri2”， prefix3: *,uri3w
+)
+以这种方式提供的命名空间信息，可以方便地转换为针对特定浏览器的命名空间解析格式。下面给 出了 selectSingleModeG函数的完整代码。
+function selectSingleNode{context, expression, namespaces){
+var doc = (context.nodeType != 9 ? context.ovmerDocument ： context)?
+if {typeof doc.evaluate != •undefined"){ var nsresolver = null; if (namespaces instanceof Object){ nsresolver = funcCion(prefix){ return namespaces[prefix];
+}; *
+}
+var result s doc.evaluate(expression/ context, nsresolver,
+XPathResult.FIRST_ORDERED_NODE_TYPE, null); return {result !== null ? result.singleNodeValue ： nul1);
+} else if (typeof context.selectSingleNode != "undefined"){
+//创建命名空间字符串
+if (namespaces instanceof Object){ var ns * "■;
+for (var prefix in namespaces){
+if (namespaces.hasOwnProperty{prefix)){
+ns += "xmlns： ■ + prefix + •*= 'H + namespaces[prefix] + *•";
+}
+}
+doc. setProperty{ "SelectionNamespaces"ns);
+}
+return context.selectSingleNode(expression);
+> else {
+throw new Error("No XPach engine found.")/
+}
+}
+CrossBrowserXPathExampleOI. htm
+
+536 第 18 章 JavaScript 与 XML
+这个函数首先要确定XML文档，以便基于该文档对表达式求值。由于上下文节点可能是文档，所 以必须要检测nodeType属性。此沿，变量doc中就会保#对XML文档的引用。然后，可以检S彳文档 中是否存在evaluate ()方法，即是否支持DOM3级XPath。如果支持，接下来就是检测传人的 namespaces对象。在这里使用instanceof操作符而不是typeof,是因为后者对null也返回 "object•。然后将nsresolver变董初始化为null,如來提供了命名空间信息的话，就将其改为一 个函数。这个函数是一个闭包，它使用传人的namespaces对象来返回命名空间的URI。此后，调用 evaluateO方法，并对其结果进行检测，在确定是节点之后再返回该结果。
+在这个函数针对EE的分支中，需要检査context节点屮是否存在selectSingleNode()方法。与DOM 分支一样，这里的第一步是有选择地构建命名空间信息。如果传入了 namespaces对象，则迭代其属性并以 适为格式创建一^字符中。注意，这里使用了 hasOwnProperty)方法来确保对Object .prototype的任何 修改都+会影响到当前函数。最后，_用原生的selectSingleNodeO方法并返冋结果。
+如果前面两种方法都没有得到支持，这个函数就会抛出一个错误，表示找不到XPath处理引擎。下 面是使用selecCSingleNode ()闲数的示例。
+
+
+
+var result = selectSingleNode(xmldom.documenCElement, "wrox：book/wrox：author",
+{ wrox: "
+
+http://www.wrox.com/" });
+alert(serialixeXml(result));
+CrossBrowserXPathExampleOI.htm
+类似地，也以创建一个跨浏览器的se:ectNodes() E®数。这个兩数接收与selectSingle- N〇de()相同的三个参数，而且大部分逻辑都相似。为了便于看清楚，我们用加粗字体突出了这两个函 数的差别所在。	.
+function selectNodes(context, expression, namespaces){
+var doc = (context.nodeType 9 ? context.ownerDocument ： context);
+if (typeof doc.evaluate != 'undefined"){ var nsresolver = null; if (namespaces instanceof Object){ nsresolver = function(prefix){ return namespaces[prefix];
+};
+var result e doc.evaluate(expreBBion, context, nsresolver,
+XPathRoault.ORDKRED_NODE_SKAPSHOT_TYPE, null);
+var nodes ■ new Array();
+if (result 1== null){
+for (var i*0, le&sreault.enapshotLength; i  len; i++){ nodes.push(re8ult.snapehotItem(i));
+>
+}
+return nodes;
+} else if {typeof context.selectNodes != •undefined"}{
+//创建命名空间字符串
+if (namespaces instanceof Object){ var ns = ” ;
+
+18.3浏览器对XSLT的支持 537
+for (var prefix in namespaces){
+if (namespaces.hasOwnProperty(prefix)){
+ns "xmlns:" + prefix + _*•_ + namespaces[prefix] +
+doc.setProperty("SelectionNamespaces", ns);
+}
+var result 羼 context•06lectNodesexpr>08Bioxi>/ var nodes = new Array();
+for (var i«0,len-result.length; i  len; !+♦){ nod«B.pu8lire0ult Ei】>;
+)
+return nodes;
+} else {
+throw new Error("No XPath engine found.");
+}
+CrossBrowserXPathExample02. him
+很明显，其中有很多逻辑都与selectSingleNodeO方法相同。在函数针对DOM的部分，使用 了有序快照结果类型，然后将结果保存在了一个数组中。为了与丨E的实现看齐，这个函数应该在没找 到匹配项的情况下也返回一个数组，因而最终都要返回数组nodes。在函数针对IE的分支中，调用了 selectNodes )方法并将结果复制到f 一个数组中。因为IE返回的是一个NodeList,所以最好将节 点都复制到一个数组中，这样就可以确保在不同浏览器下，函数都能返回相同的数据类型。使用这个函 数的示例如下：
+var result = selectNodes(xmldom.documentElement, "wrox：book/wrox：author *
+{ wrox： ■
+
+http://www.wrox.com/" });
+alert(result.length);
+CrossBrowserXPathExample02. htm
+为了求得最佳的浏览器兼容性，我们建议在JavaScript中使用XPath时，只考虑使用这两个方法。
+18.3浏览器对XSLT的支持
+XSLT是与XML相关的一种技术，它利用XPath将文档从一种表现形式转换成另一种表现形式。与 XML和XPath不同，XSLT没有正式的API,在正式的DOM规范中也没有它的位置。结果，只能依靠 浏览器开发商以自己的方式来实现它。IE是第一个支持通过JavaScript处理XSLT的浏览器。
+IE 中的 XSLT
+与1E对其他XML功能的支持一样，它对XSLT的支持也是通过ActiveX对象实现的。从MSXML 3.0 (即丨E6.0 )时代起，IE就支持通过JavaScript实现完整的XSLT丨.0操作。IE9中通过DOMParser创建 的DOM文栲不能使用XSLT。
+1.简单的XSLT转换
+使用XSLT样式表转换XML文档的最简单方式，就是将它们分别加到一个D0M文档中，然后再
+
+538 第 18 章 JavaScript 与 XML
+使川transformNodeO方法。这个方法存在于文杓的所有节点中，它接受一个参数，即包含XSLT样 式表的文构。调用transformNode ()方法会返M -个包含转换丨it息的字符串。来肴一个例子。
+//加栽XML和XSLT (仅哏于IE) xmldom.load(■employees. xni"); xsitdom.load{"employees.xslt")?
+//转換
+var result =： xmldor..transformNode(xsltaom};
+IEXsltExampleOI .htm
+这个例子加载了一个XML的DOM文捫和一个XSLT样式表的DOM文档。然后，在XML文档节 点上调LransformNodeO方法，并传人XSLTcj变量result中最后就会保存一个转换之后得到 的字符中。S要注意的是，由于是在文档节点级别丨:调用的transformNodeU,因此转换是从文档节 点开始的。实际h, XSLT转换吋以在文档的任何级別上进行，只要在想要开始转换的节点h调用 transforaNodeO方法即可。卜面我们来看-个例子。
+result = xmldom.documentEloir.ent. transEormNode {xsltdom}; result = xmldom.documentElement.childNodes[1].transformNode(xsltdom)? result - xmldom.getElenentsRyTagNair.eC"name") (0] .transformNode(xsltdoni}; result = xmldom.documentElemcnt.firstChild.lastChild.transformNode(xsltdom);
+如果不是在文档元素上调用transformNodeO,那么转换就会从调用节点上面开始。不过，XSLT 样式表则始终都可以针对调用节点所在的整个XML文档，时无®更换。
+2.复杂的XSLT转换
+虽然transformNode U方法提供了基本的XSLT转换能力，但还有使用这种语言的更复杂的方式。 为此，必须要使用XSL模板和XSL处理器。第一步是要把XSLT样式表加载到一个线程安全的XML 文样中。而这可以通过使用ActiveX对象MSXML2 • FreeThreadedDOMDocument来做到。这个ActiveX 对象与ie中常规的d〇m支持相同的接n。此外，创建这个对象时应该尽可能使用最新的版本。例如：
+function createThreadSafeDocument(){
+if (typeof arguments.callee.activeXString != "string"){ var versions - [ "MSXML2 .FreeThreadedEX)KDocuinent. 6^0",
+"MSXML2. FreeThreadedIX)MDocuiRent .3.0"/
+"MSXML2.FreeThreadedDOMDocument-],
+i, len;
+for (i=0,len=versions•length; i  len; i++){ try {
+r.ew Ac t iveXObj ect(versions[i]);
+arguments.callee.activeXString = versions[i];
+break;
+} catch (ex){
+//跳过
+}
+return now ActiveXObject{arguments.callee.activeXString);
+IEXsltExampleOI. htm
+
+18.3浏览器对XSLT的支持 539
+除了签名不同之外，线程安全的XML DOM文杓与常规XML DOM文档的使用仍然是样的，如 下所示：
+var xsltdom = createThreadSafeDociument ();
+xsltdom.async = false;
+xs1tdom.load("employees.xs1t")?
+在创建并加载/•自由线程的DOM文裆之后，必须将它指定给一个XSL模板，这也是一个ActiveX 对象。而这个模板是用来创建XSL处理器对象的，后者则是用来转换XML文朽的。同样，也需要使用 最新版本来创建这个对象，如下所示：	.
+
+
+
+function createXSLTemplateO {
+if (typeof arguments.callee.activeXScring != "string"){
+var versions = ["MSXML2.XSLTemplate.6.0",
+-MSXML2.XSLTemplate.3.0",
+"MSXML2.XSLTemplate-1,
+i, len;
+for (i=0,len=versions.length; i  len; i++){ try {
+new ActiveXObject(versions[i]); arg\iments.callee.activeXString = versions(i); break;
+} catch (ex){
+//跳过
+}
+)
+return new ActiveXObject(arguments.callee.activeXString);
+IEXsltExample02.htm
+使用这个createXSLTemplate ()函数可以创建这个对象最新版本的实例，用法如下：
+var template = createXSLTemplateO; template.stylesheet = xsltdom;
+var processor = template.createProcessor(); processor.input = xmldom? processor.transform();
+var result = processor.output;
+IEXsltExample02. htm
+在创建7*XSL处理器之后，必须将要转换的节点指定给input属性。这个值可以是一个文档，也 可以是文档中的任何节点。然后，调用transformO方法即可执行转换并将结果作为字符串保存在 output属性中。这些代码实现r与transformNode ()相同的功能。
+
+XSL模板对象的3.0和6.0版本存在显著的差别。在3.0版本中，必须给input 属性指定一个完整的文档;如果指定的是节点，就会导致轴误◊而在6.0版本中，则 可以为input•属性指定文桂中的任何节点。
+18
+
+540 第 18 章 JavaScript 与 XML
+使用XSL处理器可以对转换进行更多的控制，同时也支持更高级的XSLT特性。例如，XSLT样式 表可以接受传人的参数，并将其用作局部变量。以下面的样式表为例：
+?xml version="1.0',?>
+xsl：stylesheet version=N1.0" xntlns：xsl="
+
+http://www.w3.org/1999/XSL/Transform">
+xsl:output raethod=-htnil"/>
+xsl：param name="message"/>
+xsl:template match="/">
+ul>
+xsl ： apply-templates select="*V>
+/ul>
+p>Message： xsl ：value-of selects"$messageM/x/p>
+/xsl: templato
+ocsl:template match?employee">
+lixxsl ： value-of selects'’name" />,
+emxxsl: value-of select="etitle"/>/em>/li>
+/xsl:template>
+/xsl：stylesheot>
+employees.xslt
+这个样式表定义了一个名为message的参数，然后将该参数输出到转换结果中。要设置message 的值，可以在调用transformU之前使用addParameter(>方法。addParameter()方法接收两个参
+数：要设置的参数名称（与在xsl	name特性中指定的一样）和要指定的值（多数情况下是
+字符串，但也可以是数值或布尔值)。K面就是这样一个例子。
+processor, input = xmldom.docunientElement; processor.addParameter("message", *Hello World!"); processor.transformO;
+IEXsltExample03.htm
+通过设置参数的值，这个值就可以在输出中反映出来。
+XSL处理器的另一个髙级特性，就是能够设置一种操作模式。在XSLT中，可以使用mode特性为 模板定义一种模式。在定义了模式后，如果没有将xsl:apply-templates:^匹配的mode特性一起 使用，就不会运行该模板。下面来看一个例子。
+xsl：stylesheet version=*l.0" xmlns：xsl=*http：//
+
+www.w3.org/1999/XSL/Transform">
+xsl:output methods"html*/>
+xsl：param name="message"/>
+xsl:template match=_/_>
+ul>
+xsl rapply-templates selecC=',*"/>
+/ul>
+p>Message: xsl：value-of select="$message"/>/p>
+/xsl:template>
+
+18.3浏览器对XSLT的支持 541
+xsl：template match="employee">
+lixxsl：value-of selects"name"/>,
+emxxsl ：value-of select=*@title"/x/emx/li> /xsl:template〉
+xsl:template matchs^employee" mode="title-first"> lixemxxsl:value-of selects"@title"/x/em>#
+xsl:value-of selects"name*/>/li>
+/xsl：template>
+/xsl:stylesheet>
+employees3.xslt
+这个样式表定义了一个模板，并将其mode特性设置为-title-first”（即“先®示职位”)。在这 个模板中，首先会输出员工的职位，其次才输出员工的名字。为了使用这个模板，必须也要将 xsl:apply-templates>元素的模式设置为”title-first-。在使用这个样式表时，默认情况下其 输出结果与前面一样，先显示员工的名字，再M示员T的职位。但是，如果在使用这个样式表时，使用 JavaScript将模式设置为"title-first%那么结果就会先输出员工的职位。在JavaScript中使用 setStar tMode ()方法设置模式的例f如下。
+
+
+
+processor.input = xmldom;
+processor.addParameter"message•, "Hello World!"); processor.setStartMode{"title-first*); processor.transform〇;
+!EXsltExample05. him
+setStartModeU方法只接受一个参数，即要为处理器设置的模式。与addParameter (>-样，设 置模式也必须在调用trans f orm ()之前进行。
+如果你打算使用同一个样式表进行多次转换，可以在每次转换之后重置处理器。调用reset (>方法 后，就会清除原先的输人和输出属性、启动模式及其他指定的参数。调用reset ()方法的例子如下：
+processor • reset。;//准备下一次转換
+W为处理器已经编译了 XSLT样式表，所以与使用transfonnNodeO相比，这样进行重复转换的 速度会更快一些。
+MSXML只支持XSLT 1.0。由于微软的战略重点转移到了 .NET Framework,因而 MSXML的开发被停止了。我们希望在不久的将来，能够通过JavaScript访问XML和
+XSLT.NET 对象。
+XSLTProcessor 类型
+Mozilla通过在Firefox中创建新的类型，实现了 JavaScript对XSLT的支持。开发人员可以通过 XSLTProcessor类型使用XSLT转换XML文梢，其方式与在IE中使用XSL处理器类似。因为这个类 型是率先出现的，所以Chrome、Safari和Opera都借鉴r相同的实现，最终使XSLTProcessor成为了 通过JavaScript进行XSLT转换的事实标准。
+
+542 第 18 章 JavaScript 与 XML
+IE的实现类似，第一步也是加载两个DOM文档，一个基于XML，另•个基于XSLT。然后， 创建.个新XSLTProcessor对象，并使ffl importStylesheet (>方法为其指定一个XSLT，如下面 的例子所示。
+var processor = new XSLTProcessorf) processor.importStylesheet(xaltdom);
+XsliProcessorExample01.htm
+SAl• —步就是执行转换。这一步有两种不同的方式，如果想返W—个完整的DOM文档，可以调用
+transf ormToDocument () a而通过调用transf ormToFragment (>则可以得到一个文相片段对象。一 般来说，便用transformToFragmenU)的唯一理由，就是你还想把返回的结果添加到另一个DOM文 档中。
+在使丨丨丨transformToDocument (>时，只要传入XML DOM,就可以将结果作为一个完全不同的 DOM文档来使用。来看下面的例子。
+
+
+
+var result = processor.transformToDocument(xmldom);
+alert {serializeXjnl (result));
+XsltProcessorExampleOLhtm
+而transformToFragment ()方法接收两个参数：要转换的XML DOM和应该拥有结果片段的文 档。换句话说，如果你想将返M的片段插人到页面中，只要将document作为第二个参数即可。下面来 春一个例子。
+var fragment = processor.transformToDocument(xmldom, document); var civ = document.getElementById{"divResult-); div.appendChild(fragment);
+XsttProcessorExample〇2, htm
+这ffi,处理器创建/个由document对象拥有的片段。这样，就可以将返回的片段添加到页面中 LI有的div>元索中了。
+在XSLT样式表的输出格式为__xml»或•html•的情况下，创建文档或文档片段会非常有用。不过， 在输出格式为“text"时，我们通常只希望得到转换的文本结果。句惜的是，没有方法能够直接返回文 本。电输出格式为text"时调用transformToDocument ()，仍然会返回一个完整的XML文档，但 这个文档的内容在不问浏览器中却不一样。例如，Safari会返回一个完整的HTML文档，而Opera和 Firefbx则会返回一个只包含一个元索的文档，这个元素中包含着输出的文本。
+使用transformToFraginent 〇方法可以解决这个问S,这个方法返回的是只包含一个子节点的文 档片段.而子节点中包含苕结果文本。然后，使用下列代码就可以取得其中的文本。
+var fragment = processor.transformToFragment(xmldom, document);
+var text = fragment•firstchild.nodeValue;
+alert(text);
+以上代码能够在支持的浏览器屮一致地运行.而R能够恰好返冋转换得到的输出文本。
+1.使用参数
+XSLTProcessor也支持使JH SetParamet;eir(>来设置XSLT的参数’这个方法接收个参数：命名空间
+
+18.3浏览器对XSLT的支持 543
+URI、参数的内部名称和要设置的值。通常，命名空间URI都是null,而内部名称就是参数的名称。另外， 必须在_用transformToDocunent 〇或transformToFragment ()之前调用这个方法〇下面来看例
+var processor = new XSLTProcessorO processor. iir.portStylesheet (xsltdom);
+processor. set Parameter (nul 1, "message**, "Hello World! *); var result = processor.transformToDocument(xmldom);
+XsltProcessorExampIe03.htm
+还也两个与参数有关的方法，getParameter()和removeParameterU ,分别用于取得和移除.当 前参数的值。这两个方法都要接受命名空间参数（同样，通常是mm〉和参数的内部名称。例如：
+var processor = new XSLTProcessorO processor.importStylesheet(xsltdom);
+processor.setParameter(null, "message", "Hello World!");
+alert (processor .getParameter (null, "message")) ;	//输出"Hello World!"
+processor.removeParameter(null, "message");
+var result = processor.transformToDocument(xmldom);
+这两个方法并不常用，提供它们只足为了方便起见。
+2.重S处理器
+每个XSLTProcessor的实例都可以重用，以便使川不同的XSLT样式表执行不同的转换。重置处 理器时要调用reseU)方法，这个方法会从处理器中移除所有参数和样式*。然后，你就可以再次调用 importStylesheet ),以加载不同的XSLT样式表，如}面的例子所不。
+var processor = new XSLTProcessorO processor.importStylesheec(xslcdom)?
+//执行转换
+processor.reset();
+processor.importStyleshect(xsltdom2);
+//再执行转换
+在耑要基于多个样式表进行转换时，重ffl—个XSLTProccssor可以节脊内存。
+18.3.3跨浏览器使用XSLT
+1E对XSLT转换的支持与XSLTProcessor的丨X别实在太大，W此耍想重新实现二者所有这方面的 功能并不现实。因此，跨浏览器兼容性最好的XSLT转换技术，只能是返冋结果字符串。为此在IE中只 需在上下文节点上调用transformNodeOWnl，而在其他浏览器中则需要序列化transformTo- Document (>操作的结果。下面这个函数mJ■以在IE、Firefox、Chrome、Safari和Opera中使用。
+function transform(context, xslt){
+if (typeof XSLTProcessor != "undefined">{ var processor = new XSLTProcessorO; processor.importStylesheet(xslt);
+var result = processor.transformToDocument(context); return (new XMLSerializer()).serializeToString(result);
+} else if {typeof context.transformNode J = "undefined") { return context.transformNode(.xslt);
+} else {
+throw new Error("No XSLT processor available.");
+CrossBrowserXsltExampleOL htm
+这个transformO函数接收两个参数：要执行转换的上下文节点和XSLT文档对象。首先，它检 测是否有XSLTPr〇CeSS〇r类型的定义，如果有则使用该类型来进行转换。在调用transformTo- Document()方法之后，将返回的结果序列化为字符串。如果上下文节点中有transfont〗Node(l方法, 则调用该方法并返回结果。与本章中其他的跨浏览器闲数一样，transfonnU也会在XSLT处理器无效 的情况F抛出错误。下面是使用这个函数的示例^ var result = transformfjanldom, xsltdom);
+使用IE的transformNode ()方法，可以确保不必使用线程安全的DOM文柄进行转换。
+注意，由于不同浏览器的XSLT引擎不一样，因此转换得到的结果在不同浏览器 间可能会稍有不同，也可能会差别很大。因此，不能绝对依赖在JavaScript中使用XSLT 进行转换的结果。
+###  18.4 小结
+JavaScript对XML及其相关技术有相当大的支持。然而，由于缺乏规范，共同的功能却存在一些不 同的实现。DOM2级提供了创建空XML文档的API,但没有涉及解析和序列化。既然规范没有对这些 功能作出规定，浏览器提供商就各行其是，拿出了fi己的实现方案。IE采取了下列方式。
+- [ ] 通过ActiveX对象来支持处理XML,而相同的对象也可以用来构建桌面应用程序。
+- [ ] Windows携带了 MSXML库，JavaScript能够访问这个库。
+- [ ] 这个库中包含对基本XML解析和序列化的支持，间时也支持XPath和XSLT等技术。
+Firefox为处理XML的解析和序列化，实现丫两个新类型，简介如下。
+- [ ] DOMParser类型比较简单，其对象可以将XML字符串解析为DOM文档。
+- [ ] XMLSerializer类型执行相反的操作，即将DOM文裆序列化为XML字符串。
+由丁-Firefox中的类型比较简单，用户众多，丨E9、Opera、Chrome和Safari都相继实现了相同的类 ■。因此，这些类型也就成为了 Web开发中的事实标准。
+D0M3级引人了一个针对XPathAPI的规范，该规范已经由Firefox、Safari、Chrome和Opera实现。 这些API可以让JavaScript基于DOM文档运行任何XPath査询，并且能够返冋任何数据的结果。IE以 自己的方式实现T对XPath的支持;具体来说，就是两个方法：selectSingleNodeO* selectNodes ()。虽然与DOM3级API相比还存在诸多限制，但使用这两个方法仍然能够执行基本的 XPath功能，即在DOM文档中査找节点或节点集合。
+与XML相关的摄后一种技术是XSLT,没冇公开发布的标准针对这种技术的功能定义相应的API。 Firefox 为通过 JavaScript处理转换创建了 XSLTProcessor 类型;此后不久，Safari、Chrome、和 Opera 也都实现了同样的类型。丨E则针对XSLT提供了自己的方案，一个是简单的transformNode 〇方法， 另一个是较为复杂的模板/处理器手段。
+目前，IE、Firefox、Chrome和Opera都能够较好地支持XML。虽然IE的实现与其他浏览器相比差 异比较大，但仍然还是有较多的公共功能可供我们实现跨浏览器的方案。  
+[上一章](https://github.com/qianjilou/javascript3/blob/master/chapter/chapter17.md)&emsp;&emsp;[下一章](https://github.com/qianjilou/javascript3/blob/master/chapter/chapter19.md)

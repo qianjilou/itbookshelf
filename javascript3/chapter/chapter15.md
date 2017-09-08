@@ -1,0 +1,890 @@
+##  第15章 使用Canvas绘图([返回首页](https://github.com/qianjilou/javascript3))
+**本章内容**
+- [ ] 理解canvas兀素
+- [ ] 绘制简单的2D图形
+- [ ] 使用WebGL绘制3D图形 
+ 
+用说，HTML5添加的最受欢迎的功能就是canvas元素。这个元素负责在页面中设定一个 域，然后就可以通过JavaScript动态地在这个K域中绘制图形。canvasS素最早是由苹 果公司推出的，当时主要用在其Dashboard微件中。很快，HTML5加人了这个元素，主流浏览器也迅 速开始支持它。丨 E9+、Firefoxl.5+、Safari2+、Opera9+、Chrome、iOS 版 Safari 以及 Android 版 WebKit 都在某种程度t支持canvas。
+与浏览器环境中的其他组件类似，canvaS由几组API构成，但并非所夯浏览器都支持所有这些 API。除了具备基本绘图能力的2D上下文，canvas还建议了一个名为WebGL的3D上下文。目前， 支持该元素的浏览器都支持2D上下文及文本API,但对WebGL的支持还不够好•。由于WebGL还是实 验性的，闲此要得到所有浏览器支持还需要很长一段时间。Pirefox 4+和Chrome支持WebGL规范的早 期版本，但一些老版本的浏览器，比如Windows XP,由于缺少必要的绘图驱动程序，即便安装了这两 款浏览器也无济于事。
+###  15.1 基本用法
+要使用CanvaS元素，必须先设置其width和height属性，指定吋以绘图的区域大小。出现在 开始和结束标签中的内容是后备信息，如果浏览器不支持canvas元素，就会M示这些信息。下面就
+是<0311乂33>元素的例子。
+```
+<canvas id="drawing" widths" 200" height="200">A drawing of something.</canvas>
+```
+与其他兀素一样，canvas兀素对应的DOM兀素对象也有width和height属性，可以随意修 改。而且，也能通过CSS为该元素添加样式，如果不添加任何样式或者不绘制任何图形，在页面中是看 不到该元素的。
+要在这块画布（canvas)上绘图，需要取得绘图上下文。而取得绘图上下文对象的引用，需要调用 getContextO方法并传入上下文的名字。传人"2d-,就可以取得2D上下文对象。
+var drawing = document.getElementByTd(•drawing")；
+/ /項定浏览器支持<03收35>元余 if (drawing.getContext){
+
+446 第15章使用Canvas绘图
+var context » drawing.getCon匕ext:< ”2d” ；
+//更多代码 }
+在使用<〇31^沾>元素之前，首先要检测getcontexto方法是否存在t这一步非常重要。有些浏 览器会为HTML规范之外的元素创建默认的HTML元索对象®。在这种情况下，即使drawing变fi中 保存肴-个有效的元素引用，也检测不到getcontext ()方法。
+使用t〇DataURL(>方法，可以导出在<car.vaS>元素上绘制的图像。这个方法接受一个参数，即图 像的MIME类型格式，而且适合用f•创建图像的任何上下文。比如，要取得両布中的一幅PNG格式的 图像，可以使用以下代码。
+
+
+
+var drawing = document.getElomonCById{"drawing")；
+/ /确定洲览器支持<0311乂38>元索 if (drawing.getContext){
+//取得图像的数据UHI
+var imgURI = drawing.toOataURL(nimage/pngN)；
+//显示图像
+var image = document • createBlement: (M img 0)；
+image*src = imgURI;
+docujnent • body. appendChi Id (image);
+2DData UrlExampleOl. htm
+默认情况下，浏览器会将图像编码为PNG格式（除非另行指定)。Firefox和Opera也支持基于 "image/jpeg"参数的JPEG编码格式。由于这个方法是后来j追加的，所以支持canvas的浏览器也 是在较新的版本中才加人丫对它的支持，比如IE9、Firefox 3.5和Opera 10。
+f
+如果绘制到画布上的田像源自不同的城，toDataURL (>方法会‘抛出错误。本幸后
+面还将介绍更多相关内容。
+2D上下文
+使用2D绘图上下文提供的方法，可以绘制简单的2D图形，比如矩形、弧线和路径。2D上下文的 坐标开始于素的左h角，原点坐标是(0,0)。所有坐标值都基于这个原点计算，jc值越大表示 越靠右，^值越大表示越靠下。默认愔况下，width和height表示水平和垂直两个方向上可用的像素 数H。
+15.2.1填充和描边
+2D h下文的两种基本绘图操作是填充丨描边。填充，就是用指定的样式（颜色、渐变或图像）填 充阁形；描边，就是只在图形的边缘画线。大多数2D丨下文操作都会细分为填充和描边两个操作，而
+①假设你想在Firefox3中使用<car.vas>元索。M然浏览器会为该标签创建…个DOM对象，而且也可以引用它，但 这个对象屮并没存getContext ()方法。（据作者冋复>
+
+15.2 2D上下文 447
+操作的结果取决于两个属性：fillStyle和strokeStyle。
+这两个属性的值可以是字符串、渐变对象或模式对象，而且它们的默认值都是"#000000"。如果为 它们指定表示颜色的字符串值，可以使用CSS中指定颜色值的任何格式，包括颜色名、十六进制码、 rgb、rgba、hsl 或 hsla。举个例子：
+var drawing = document,getElementById{"drawing*)；
+/ /确定洲览器支持<0311仍5>元索 if (drawing.getContext){
+var context = drawing.getContext("2d"); context.strokeStyle = "red"； context.fillStyle = ”#0000ff*;
+}
+以上代码将strokeStyle设置为red ( CSS中的颜色名），将fillStyle设罝为#0000ff (蓝色)。 然后，所有涉及描边和填充的操作都将使用这两个样式，直至重新设置这两个值。如前所述，这两个属 性的值也可以是渐变对象或模式对象。本章后面会讨论这两种对象。
+15.2.2绘制矩形
+矩形是唯一一种可以直接在2D上下文中绘制的形状。与矩形有关的方法包括fillRectU、 strokeRect(>和clearRectU。这三个方法都能接收4个参数：矩形的jc坐标、矩形的坐标、矩形 宽度和矩形高度。这些参数的申-位都是像素。
+首先，fillRecU)方法在画布上绘制的矩形会填充指定的颜色。填充的颜色通过fillStyle属 性指定，比如：
+var drawing = document.getElementById("drawing")；
+/ /肩定浏览酱支持canvas元素 if (drawing.getContext){
+var context = drawing.getContext("2d");
+/*
+*根据Kozilla的文档
+* http：//developer.moziXla.org/en/docs/Canvas_cutorial：Basic_usage
+//給«紅色鉅形
+context.fi UStyle *
+context.£i llRect(10r
+"#«0000■;
+10, 50, 50);
+//飧韵亭透明的蓋色矩形
+context.fi UStyle ■ "rgba(0,0,255,0*5) context.f1 llRect(30, 3〇/ 50, 50);
+2DFiURectExample01. htm
+以上代码首先将fillStyle设置为红色，然后从(10,10班开始绘制矩形，矩形的宽和高均为50像 素。然后，通过rgba()格式再将fillStyle设置为半透明的蓝色，在第一个矩形h面绘制第二个矩
+
+448 第15章使用Canvas绘图
+形。结果就是可以透过蓝色的矩形看到红色的矩形（见图15-1)。
+strokeRect (>方法在画布上绘制的矩形会使用指定的颜色描边。描边颜色通
+过strokeStyle属性指定。比如：
+var drawing = document.getElementById("drawing")；
+/ /确定别兒器支持canvas元素
+if (drawing.getContoxt){
+var context = drawing.getContcxtC*2d")；
+
+
+
+*根据Mozilla的文档
+* http：//developer.rno2illa.org/en/docs/Canvas_tutorial:Basic_usage
+//给制红色福边錄形
+context.strokeStyle ■ M#ff0000"; context•strokeRact(10» 10, 50, 50}/
+//絵制半透明的蓝色推边矩形
+context.strokeStyle ■ "rgba(0,0,255^ 0.5)"; context»strokeRect(30, 30, 50, 50);
+2DStrokeRectExampleOJ.htm
+以上代码绘制了两个®叠的矩形。不过，这两个矩形都只有框线，内部并没有填充颜色（见图15-2)。
+图 15-2
+描边线条的宽度由linewidth属性控制，该属性的值可以是任意整数3另外， 通过lineCap属性可以控制钱条末端的形状是平头、圆头还是方头（"butt*、 •round*或"square")，通过lineJoin爲性可以控制钱条相交的方式是囷交、斜 交还是斜接（"round"、)。
+最后，clearRecU)方法用于清除両布上的矩形K域。本质这个方法可以把绘制上下文中的某 一矩形区域变透明。通过绘制形状然后再清除指定区域，就可以生成有意思的效果，例如把某个形状切 掉一块。下面看一个例子。
+var drawing = document,getElementById(*drawing")；
+//确定測览器支持canvas元素 if {drawing.getContext){
+var context = drawing.getContext("2d")；
+
+15.2 2D上下文 449
+*根据Mozilla的文核
+* http://developer.mo2illa.0rg/en/docs/Canvas_tutorial:Basic_usage
+//绘制红色矩形
+context.fillStyle = "#ffOOOO"; context.fillRectdO, 10, 50, 50)；
+//绘制半透明的蓝色矩形
+context.fillStyle = "rgba(0,0,255,0.5)"； context.fillRect(30, 30, 50, 50);
+//在角个钷形重叠的地方清除一个小矩形 context.clearRect(40, 40, 10, 10);
+2DClearRectExampleOLhtm
+如图丨5-3所示，两个填充矩形重叠在一起，而重叠的地方又被清除了一个4、
+矩形区域。
+15.2.3绘制路径
+2D绘制上下文支持很多在画布上绘制路径的方法。通过路径可以创造出复
+杂的形状和线条。要绘制路径，首先必须调用beginPathU方法，表示要开始	图丨5-3
+绘制新路径。然后，再通过调用下列方法来实际地绘制路径。
+arc (x, y, radius, startAngle, endAngle, counterclockwise)：以（x,y> 为圆心绘 制一条弧线，弧线半径为radius,起始和结束角度（用弧度表示）分别为startAngle和 endAngle。最后一个参数表不startAngie和endAngle是否按逆时针方向计算，值为false 表示按顺时针方向计算。
+arcTo(xl, yl, x2, y2, radius)-. M-t—点开始绘制一条弧线，到（x_2,y2)为止，并且以 给定的半径radius穿过。
+口 bezierCurveTo (clx, cdy, c2x, o2y, x, y):从匕一点开始绘制一条曲线，到(x,yl 为 止，并且以（c2x,cly)和（c2x,c2y>为控制点。
+lineTo(x, y)：从上一点开始绘制一条直线，到(x,y)为止。
+moveTo(x, y):将绘图游标移动到(x,y>,不_线。
+quadraticCurveTo(cx, cy, x, :从上一点开始绘制一条二次曲线，到(x,y>为止，并 且以作为控制点。
+rect(x, y, width, Ae^ght):从点（x,y)开始绘制一个矩形，宽度和高度分别由width和 height指定。这个方法绘制的是矩形路径，而不是strokeRect()和fillRect(>所绘制的独 立的形状。
+创建了路径后，接下来有几种可能的选择。如果想绘制一条连接到.路径起点的线条，可以调用 cl〇Sepath(>。如果路径已经完成，你想用fillStyle填充它，可以调用fill()方法。另外，还可 以调用stroke(>方法对路径描边，描边使用的是strokeStyle。最后还nj■以调用clip(),这个方法 可以在路径上创建一个剪切区域。
+
+
+
+
+450 第15章使用Canvas绘图
+
+
+
+下面看一个例子，即绘制一个不带数字的时钟表盘。
+var drawing = document.getEXement3yId("drawing");
+//确定浏览器■支持canvas元索 if (drawing.getContext){
+var context = drawing.getContext(*2d");
+//开始珞往
+context.beginFath()；
+"纷剩外《
+context.arc(100, 100, 99, 0, 2 * Math.PI# false);
+//始^内固
+context.moveT〇(194, 100)；
+context.arc(100, 100, 94, 0, 2 * Math.PI, false); //綸制分针
+context.moveTo(100, 100); context.llneTo(100 # 15);
+//<Mp!时针
+context.moveTo(10 0 # 100); context.lineTo(35, 100);
+"«边路径 context.stroke <);
+2DPathExample01.htm
+这个例子使用arc<)方法绘制了两个圆形：一个外圆和一个内圆，构成了表盘的边框。外圆的半径 是99像素，圆心位于点(100,100),也是画布的中心点。为了绘制一个完整的圆形，我们从〇弧度开始, 绘制2jc弧度（通过Math. PI来计算)。在绘制内閲之前，必须把路径移动到外圆上的某--点，以避免 绘制出多余的线条。第二次调用arc ()使用了小一点的半径，以便创造边框的效果。然后，组合使用 moveTo<)和lineTo。方法来绘制时针和分针。最后一步是调用stroke。方法，这样才能把图形绘制 到画布上，如图15*4所示。
+
+
+
+图154
+
+
+
+15.2 2D上下文 451
+在2D绘图上下文中，路径是■-种主要的绘图方式，因为路径能为要绘制的图形提供更多控制。由 于路径的使用很频繁，所以就有了一个名为isPointlnPatHO的方法。这个方法接收x和;(；坐标作为 参数，用于在路径被关闭之前确定_布上的某一点是否位于路径上，例如：
+2D上下文中的路径API已经非常稳定，可以利用它们结合不同的填充和描边样式，绘制出非常复 杂的图形来。
+15.2.4绘制文本
+文本与图形总是如影随形。为此，2D绘图上下文也提供了绘制文本的方法。绘制文本主要有两个 方法：fillText()和strokeTextO。这两个方法都可以接收4个参数：要绘制的文本字符串、x坐 标、y坐标和可选的最大像素宽度。而且，这两个方法都以下列3个属性为基础。
+口 font:表示文本样式、大小及字体，用CSS中指定字体的格式来指定，例如"10px Arial"。 口 textAlign:表亦文本对齐方式。可能的值有"start"、"end"、_left"、"right"和"center"。 建议使用"start:"和-end",不要使用’left;-和’’right",因为前两者的意思更稳妥，能同时 适合从左到右和从右到左显示（阅读）的语言。
+- [ ]  textBaseline:表亦文本的基线。可能的值有"top-、“hanging"、"middle"、"alphabetic"、 ideographi c，'和丨’ bot tom"。
+这几个属性都有默认值，因此没有必要每次使用它们都重新设置一遍值。fillTextO方法使用 fillStyle属性绘制文本，而strokeTextO方法使用strokeStyle属性为文本描边。相对来说，还 是使用fillTextO的时候更多，因为该方法模仿了在网页中正常显示文本。例如，下面的代码在前一 节创建的表盘丨:方绘制了数字12:
+if {context.isPointInPath(100/ 100)){
+alerc("Point (100, 100) is in the path.")；
+
+
+
+(Q
+context.font = "bold 14px Arial context.textAlign = "center"；
+context.textBaseline = "middle* context.fillText("12", 100, 20)
+2D TextExample01.htm
+结果如图15-5所示。
+
+
+
+图 15-5
+
+452 第15章使用Canvas绘图
+因为这里把16乂^11911设置为*^611^2："，把1：6父^35611116设置为"1111(3(116"，所以坐标(100,20) 表示的是文本水平和垂直中点的坐标。如果将textAlign设置为”start”，则x坐标表示的是文本左 端的位IS(从左到右阅读的语言）；设置为knd",则x坐标表示的是文本右端的位置（从左到右阅读的 语言)。例如：
+//正常
+context.font = "bold 14px Arial"; context.textAlign = "center"； context.textBaseline » "middle"； context.fillText(*12", 100# 20);
+//起点对齐
+context•textAJLig'n 塞"start"; context.fi llText("12", 100, 40);
+/✓终点对齐
+context.textAlign « "end";
+context.fi 1lText("12", 100, 60);
+2DTexfExampU02.htm
+这一 M绘制了三个字符串_12",每个字符串的x坐标值相同，但textAlign值不同。另外，后两 个字符串的^坐标依次增大，以避免相互重叠◊结果如图15-6所示。
+
+
+
+表盘中的分针恰好位于正中间，因此文本的水平对齐方式如何变化也能够一目了然。类似地，修改 textBaseline属性的值可以调整文本的垂直对齐方式：值为_top”，^坐标表示文本顶端；值为 "bottom”，少坐标表不文本底端；值为"hanging*、"alphabetic"和"ideographic”，则少坐标分 别指向字体的特定基线坐标。
+由于绘制文本比较复杂，特别是需要把文本控制在某一区域中的时候，2D上下文提供了辅助确定 文本大小的方法measureTextO。这个方法接收■-个参数，即要绘制的文本；返回.-个TextMetrics 对象。返回的对象S前只有一个width属性，但将来还会增加更多度量属性。
+measureText()方法利用 font、textAlign 和 textBaseline 的？前值指定文本的大小。 比如，假设你想在一个140像素宽的矩形区域中绘制文本Hello world!,下面的代码从100像素的字体 大小开始递减，最终会找到合适的字体大小。
+
+15,2 2D上下文 453
+
+
+
+var foutsize = 100;
+context.font = fontSi2e + "px Arial"；
+while(context.measureText("Hello worldl").width > 140){
+fontSize—;
+context.font = fontSize + -px Arial*;
+context. fillText ("Hello world.1", 10, 10);
+context.fillText("Font si2e is " + fontSize + "px", 10, 50);
+2DTextExample03.htm
+前面提到过，fillText和strokeText (}方法都时以接收第四个参数，
+也就是文本的最大像素宽度。不过，这个可选的参数尚未得到所有浏览器支持	—丨	I
+(最早支持它的是Firefox 4)。提供这个参数后，调用fillTextO或	宇体大'丨、为26像索
+strokeTextU时如果传人的字符串大于最大宽度，则绘制的文本字符的高度	图15-7
+正确，但宽度会收缩以适应最大宽度。图15-7展示了这个效果。
+绘制文本还是相对比较复杂的操作，丙此支持<CarwaS>元素的浏览器也并未完全实现所有与绘制 文本相关的API。
+15.2.5变换
+通过上下文的变换，可以把处理后的图像绘制到画布上。2D绘制上下文支持各种基本的绘制变换。 创建绘制上K文时，会以默认值初始化变换矩阵，在默认的变换矩阵卞，所有处理都按描述直接绘制。 为绘制上下文应用变换，会导致使用不同的变换矩阵应用处理，从而产生不同的结果。
+可以通过如下方法来修改变换矩阵。
+:围绕原点旋转图像angrje弧度。
+scaien :缩放图像，在jc方向乘以 scaleX,在y方向乘以 scaJey。scaieX 和scaley的默认值都是1.0。
+translate (x, y):将坐标原点移动到(x,y)。执行这个变换之后，坐标(0,0)会变成之前由（x,y) 表示的点。
+transform(inl_i,	;n2_2, dx, dy):直接修改变换矩阵，方式是乘以如下
+- [ ]  setTransform(m_2_l, ml_2,爪2__2, /nH dx, dy):将变换矩阵重置为默认状态，然后
+再调用 tra/isfarm () 〇
+变换有可能很简单，但也可能很复杂，这都要视情况而定。比如，就拿前面例子中绘制表针来说，
+如果把原点变换到忐盘的中心，然后再绘制表针就容易多了。请看下面的例子。
+
+
+
+var drawing = document.getElementByXd("drawing")；
+/ /确定浏览器Jl持canvas元责 if (drawing.getContext){
+
+454 第15章使用Canvas绘困
+var context = drawing.getContext{■2d*)?
+//开始路径
+context.beginPathO ;
+//烩制外®
+context.arc(100, 100, 99, 0,
+//绘制内B
+context,moveTo(194, 100)；
+context.arc(100, 100, 941 0,
+//交换原点
+context. translate (100, 100);
+分针
+context .aiovaTo (0»0);
+context•lineTo < 0• -85)j
+//給制时♦ context.
+时针
+noveTo(0,
+0);
+context.llneTo(*65» 0);
+Math.PI, false)；
+Math.PI# false)；
+//描边路径 context.st roke{);
+2DTremsformExampleOL htm
+把原点变换到时钟表盘的中心点(100,100)后，在同一方向上绘制线条就变成了简单的数学问題了。 所有数学计算都基于(0,0),而不是(100,100)。还可以更进步，像下面这样使用rotate (>方法旋转时 钟的表针。
+var drawing = document .getElementByrcl{-drawing")；
+//肩定消览器支持canvas元素 if (drawing.getContext){
+var context = drawing.getContext(*2d*);
+//开始路径
+contcxt.beginPath()；
+//绘剩外®
+context.arc(100, 100, 99, 0, 2 * Math.PI, false)；
+//绘斛内《
+context * moveTo(194/ 100)；
+context.arc(100, 100, 94, 0, 2 * Math.PI, false)；
+//变換康点
+context.translate(100, 100)；
+"旋转表针
+context.rotate <1);
+//绘制分针
+
+15.2 2D上下文 455
+context.moveTo(0,0); context.lineTo(0, -85)；
+//绘制时针
+cont ext.moveTo(0, 0); context.lineTo(~65, 0);
+//描边路径 context.stroke();
+2DTransformExample〇}, him
+因为原点已经变换到了时钟表盘的中心点，所以旋转也是以该点为圆心的。结果就像是表针真地被 固定在表盘中心一样，然后向右旋转了一定角度。结果如图15-8所示。
+
+
+
+无论是刚才执行的变换，还是fillStyle、strokeStyle等属性，都会在当前上下文中一直有效, 除非再对上下文进行什么修改。虽然没有什么办法把上下文中的一切都重置冋默认值，但有两个方法可 以跟踪上下文的状态变化。如果你知道将来还要返冋某组属性与变换的组合，可以调用save()方法。 调用这个方法后，当时的所有设罝都会进人一个栈结构，得以妥善保管。然后可以对上下文进行其他修 改。等想要凹到之前保存的设置时，可以调用restore ()方法，在保存设置的栈结构中向前返回一级， 恢复之前的状态。连续调用save ()可以把更多设置保存到栈结构中，之后再连续调用restore (>则可 以一级一级返回。下面来看一个例子。
+context.fillStyle = *#ff0000*; context.save();
+context.fillStyle = "#00f£00•； context * translate(100, 100); context.save()；
+context.fillStyle = "#0000ff*;
+context.fillRect:(0, 0, 100, 200>; //从点（10〇,1〇〇> 开始绘制蓝色矩形 context.restore();
+〇〇1116乂1^1111^以<10, 10,100,200>;//从点（110,110)开始绘制绿色矩形 context.restore()；
+
+456 第15章使用Canvas绘图
+context.fillRect(0, 0, 100, 200); //从点（0,0)开始给制红色矩形
+2DSaveRestoreExampleO 1. htm
+首先，将fillStyle设晋为红色，并调用save()保存上下文状态。接下来，把fillStyle修改 为绿色，把坐标原点变换到(1〇〇，1〇〇)，再调用3抑6()保存上下文状态。然后，把^113^^修改为蓝 色并绘制蓝色的矩形。因为此时的坐标原点已经变了，所以矩形的左上角坐标实际上是(100,100)。然后 调用restore 〇,之后fillStyle变回了绿色，因而第二个矩形就是绿色。之所以第二个矩形的起点 坐标是(110,110),是因为坐标位置的变换仍然起作用。再调用一次restoreO,变换就被取消了，而― fillStyle也返回了红色。所以最后一个矩形是红色的，而且绘制的起点是(0,0)。
+需要注意的是，save ()方法保存的只是对绘图上下文的设置和变换，不会保存绘图上下文的 内容。
+15.2.6绘制图像
+2D绘图上下文内置了对图像的支持。如果你想把一幅阁像绘制到画布上，可以使用drawImageG 方法。根据期望的最终结果不同，调用这个方法时，可以使用三种不同的参数组合。最简单的调用方式 是传人•个HTML<img>元素，以及绘制该阁像的起点的jc和y坐标。例如：
+
+
+
+var inage = document.images[0]； context.drawlmage(image, 10, 10);
+2DDrawImageExample01. htm
+这两行代码取得了文档中的第一幅图像，然后将它绘制到上下文中，起点为(10,10)。绘制到画布卜. 的图像大小与原始大小一样。如果你想改变绘制后图像的大小，可以再多传人两个参数，分别表示目标 宽度和目标高度。通过这种方式来缩放图像并不影响上下文的变换矩阵。例如：
+context.draw工mage(image, 50, 10, 20, 30);
+2DDrawImageExample01 .htm
+执行代码后，绘制出来的图像大小会变成2040像素。
+除了上述两种方式，还可以选择把图像中的某个区域绘制到上下文中。drawlmage ()方法的这种调 用方式总共需要传人9个参数：要绘制的图像、源图像的x坐标、源图像的 >>坐标、源图像的宽度、源 图像的髙度、目标图像的x坐标、目标图像的y坐标、H标图像的宽度、目标图像的髙度。这样调用 drawlmage (>方法可以获得最多的控制。例如：
+context.drawlmage(image/ 0, 10, 50, 50, 0, 100, 40, 60);
+2DDrawImageExampleO 1. htm
+这行代码只会把原始阁像的一部分绘制到IWi布上。原始图像的这一部分的起点为(0,10),宽和高都 是50像索。最终绘制到上下文中的图像的起点是(0,100),而大小变成了 40x60像素。
+这种调用方式可以创造出很有意思的效果，如阁15-9所示。
+
+15.2 2D上下文 457
+
+
+
+图 15-9
+除了给drawlmage U方法传人HTML<img>元素外，还可以传人另一个ccanvass^素作为其第一 个参数。这样，就可以把另一个W布内容绘制到当前画布上。
+结合使用drawirnageO和其他方法，可以对图像进行各种基本操作。而操作的结果可以通过 t〇DataURL(>方法获得®。不过，有一个例外，即图像不能来自其他域。如果图像来自其他域，调用 t〇DataURL<)会抛出一个错误。打个比方，假如位于www.example.com上的页面绘制的图像来自于 www.wrox.com,那当前上下文就会被认为“不干净”，因而会抛出错误。
+15.2.7阴影
+2D上下文会根据以下几个属性的值，自动为形状或路径绘制出阴影。
+shadowColor:用CSS颜色格式表的阴影颜色，默认为黑色。
+shadowOffsetX:形状或路径x轴方向的阴影偏移量，默认为0。
+QshadowOffsetY:形状或路径^轴方向的阴影偏移量，默认为0。
+shadowBlur:模糊的像素数，默认0,即不模糊。
+这些属性都可以通过context对象来修改。只要在绘制前为它们设置适当的值，就能自动产生阴 影。例如：
+var context = drawing.getContext("Sd*);
+"设直阴彩
+context.abadowO££setX > 5; context«0hado«Of£fletY » 5; context.shadovBlur	■ 4；
+context.shadowColor	* "rgba(0, 0# 0, 0.5)";
+//焓制红色矩形
+context.fillStyle = N#ff0000”； context* fillRect(10, 10, 50, 50);
+//烩制蓝色矩形
+context -fillStyle = "rgba(0,0,255,1)•；
+①请读者注意，虽然本章至今一直在讨论2D绘图上下文，但toDataURLO是Canvas对象的方法，不是上下文对 象的方法。
+
+458 第15章使用Canvas绘图
+context.fillRect(30, 30, 50, 50);
+2DFillRectShadowExample01 .htm
+两个矩形的阴影样式相同，结果如图15-10所示。
+不同浏览器对阴影的支持有一些差异。IE9、Firefox 4和Opera 11的行为
+最为规范，其他浏览器多多少少会有一些奇怪的现象，甚至根本不支持阴影。
+Chrome (直至第10版）不能正确地为描边的形状应用实心阴影。Chrome和
+Safari (盘至第5版）在为带透明像素的图像应用阴影时也会有问题：不透明
+部分的下方本来是该有阴影的，但此时则一概不见了。Safari也不能给渐变图
+形应用阴影，其他浏览器都可以。
+
+
+
+15.2.8渐变
+渐变由CanvasGradient实例表示，很容易通过2D上下文来创建和修改。要创建一个新的线性渐 变，可以调用creatieLinearGradientU方法。这个方法接收4个参数：起点的；c坐标、起点的;y坐 标、终点的x坐标、终点的坐标。调用这个方法后，它就会创建一个指定大小的渐变，并返回 CarxvasGradient:对象的实例。
+创建丫渐变对象后，下一步就是使用addC〇l〇rSc〇p()方法来指定色标。这个方法接收两个参数： 色标位置和CSS颜色值。色标位g是一个0 (开始的颜色）到1 (结束的颜色）之间的数字。例如：
+
+
+
+var gradient = context.createLinearGradienc(30/ 30, 10• 70);
+gradient.addColorStop(0, "white");
+gradient.addColorStop(1, "black")；
+2DFiURectGradientExampleOL htm
+此时，gradient对象衣示的是一个从両布上点(30,30)到点(70,70)的渐变。起点的色标是白色，终 点的色标是黑色。然沿就可以把CillSLyle或strokeStyle设置为这个对象，从而使用渐变来绘制 形状或描边：
+//絵制红色矩形
+context.fillStyle = "#ff0000’； context.fillRect(10/ 10, 50, 50)?
+//绘制渐变矩形
+context.fillStyle = gradient；
+context.fillRect(30, 30, 50, 50);
+2DFillRectGradientExample0l .htm
+为了让渐变覆盖整个矩形，而不是仅应用到矩形的一部分，矩形和渐变对
+象的坐标必须匹配才行。以h代码会得到如图15-11所示的结果。
+如果没有把矩形绘制到恰当的位置，那可能就只会显示部分渐变效果。
+例如：
+context.fillStyle = gradient；
+m i5-ii
+
+
+
+
+15.2 2D上下文 459
+context•fi1lKect(50/ 50, 50, 50);
+2DFillRectGradientExample02.htm
+这两行代奶执行后得到的矩形只介左上角稍微有-•点白色。这+:要是因为矩形的起点位于渐变的中 间位置，而此时渐变差不多已经结束了。由于渐变不重复，所以矩形的大部分区域都是黑色。确保渐变 与形状对齐非常甫要，袍时候可以考虑使用阐数来确保坐标合适。例如：
+function createRectLinearGradient(context, x, y, width, height){ return contexc.createLinearGra<3ient(x, y, x+width, y+height);
+}
+2DFHlRectGradientExample03.htm
+这个函数基于起点的;c和少坐标以及宽度和高度值来创建渐变对象，从而让我们可以在f illRect () 中使用相同的值。
+var gradient = createRectLinearGradient(context, 30, 30, 50, 50);
+gradient.addColorStop(0, "white")； gradient.addColorStop(1, "black");
+//绘制漸变矩形
+context.£i llStyle s gradient;
+context.fillRcct{30, 30, 50, 50);
+2DFillRectGradientExample03,htm
+使用画布的时候，确保來标卩1i配很東要，也需要••吟技巧。类似createRectLinearGradient (} 这样的辅助方法可以让控制坐标更容易-埤。
+要创逮径向渐变（或放射渐变），可以使用createRadialGradient ()方法。这个方法接收6个参 数，对应着两个1MI的N心和半径。前三个参数指定的是起点圆的原心（JC和y)及半径，后三个参数指 定的是终点W的原心U和及半径。奵以把径向渐变想象成一个长圆桶，而这6个参数定义的正是 这个補的两个圆形开口的位置。如果把斗圆形开口定义得比另一个小一些，那这个圆桶就变成了圆锥 体，而通过移动每个圆形开U的位置，就可达到像旋转这个圆锥体一样的效果。
+如果想从某个形状的中心点开始创建一个向外扩散的径向渐变效果，就要将两个圆定义为同心圆。 比如，就令前面创建的矩形来说，径向渐变的两个圆的圆心都应该在(55,55)，因为矩形的K域是从(30,30) 到(80,80)。请看代码：
+var gradient s context.createRadialGradient(55« 55, 10, 55, 55, 30)；
+gradient.addColorStop(0, "white");
+gradient.addColorSLop{1# "black")；
+//绘制红色矩形
+context.fillStyle = *#ff0000"；
+context.fillRect(10, 10, 50, 50);
+//绘制淞变矩形
+context.fillStyle = gradient;
+context.fillRect(30, 30, 50, 50);
+2DFillRectGradientExample04.htm
+
+460 第15章使用Canvas绘图
+运行代码，会得到如图15-12所示的结果。
+因为创建比较麻烦，所以径向渐变并不那么容易控制。不过，一般来说，
+让起点圆和终点圆保持为同心岡的情况比较多，这时候只要考虑给两个圆设置
+不同的半径就好了。
+
+
+
+15.2.9模式
+图 15-12
+模式其实就是重复的图像，可以用來填充或描边图形。要创建一个新模式，可以调用 createPattern ()方法并传人两个参数：一个HTML <img>元素和一个表示如何重复图像的字符串。 其中，第二个参数的值与CSS的background-repeat属性值相同，包括"repeat "、"repeat-x"、 ’’repeat-y"和’’no-repeat" 〇 看一个例子。
+
+
+
+var image = document.images【0],
+pattern s context.createPattern(image, "repeat");
+//绘制矩形
+context.fiilStyle * pattern； context.fillRect(10, 10, 150, 150);
+2DFillRectPattemExampleOL him
+需要注意的是，模式与渐变一样，都足从両布的原点(0,0)开始的。将填充样式（fillStyle)设置 为模式对象，只表示在某个特定的区域内显示B复的图像，而不是要从某个位置开始绘制重复的图像。 上面的代码会得到如图丨5-13所示的结果。
+图 15-13
+createPattern ()方法的第一个参数也可以是一个<video>元素，或者另一个canvas元素。
+15.2.10使用图像数据
+2D上下文的一个明M的长处就是，可以通过getlmageDataO取得原始图像数据。这个方法接收 4个参数：要取得其数据的脚面K域的太和^坐标以及该区域的像素宽度和高度。例如，要取得左上角 坐标为(10,5)、大小为50x50像素的区域的图像数据，可以使用以下代码：
+var iir.ageDaLa = context .getlmageData (10, 5, 50, 50);
+这里返lnI的对象是ImageData的实例。每个ImageData对象都有三个属性：width、height和 data。其中data属性是•个数组，保存着图像中每一个像素的数据。在data数组中，每一个像素用
+
+15.2 2D上下文 461
+4个元素来保存，分别表示红、绿、蓝和透明度值。N此，第-个像素的数据就保存在数组的第0到第 3个元素中，例如：
+var data = irr»agGDaC.a.data# red = data[OJ, green = data[l], blue = daca [2], alpha = data[3];
+数组中每个元素的值都介于0到255之间（包括0和255 )。能够立接访问到原始图像数据，就能够 以各种方式来操作这些数据。例如，通过修改图像数据，nfliU象下面这样创建一个简单的灰阶过滤器。
+var drawing - document.getElementByXd{"drawing,')；
+//确定浏览器支持<〇3：^33>元素 if (drawing.getContext){
+var context = drawing.getContexc("2d"), image = document.images(0], imageData, data, iy len, average, red, green, blue, alpha；
+//绘制原始图像
+context.drawlmage{image, 0, 0)；
+//取得图像数据
+imageData = context.getImageData(0, 0, image.width, image.height)； data v imageData.data；
+for (i=0, len-data.length； i < len； i+-4){
+red = data[i]； green = data[i+1]; blue = data[i+2]； alpha = data{i+3]?
+//求得rgb平均值
+average = Math.floor《（red + green + blue) / 3)；
+"设置顏色值，透明度不变 data[i] = average； data[i+lj = average； daca[i+2] = average;
+//回写图像数据并显示结果
+imageData.data = data?
+context.putlmageData(imageData, 0, 0);
+2DImageDataExampleO 1. him
+这个例子首先在幽面上绘制了一幅图像，然后取得了原始图像数据。其中的for循环遍历了图像数 据中的毎一个像素。这里要注意的是，每次循环控制变ft i都递增4。在取得每个像素的红、绿、蓝颜
+
+462 第15章使用Canvas绘图
+色值后，汁算出它们的平均值。再把这个平均值设置为每个颜色的值，结果就是去掉了每个像素的颜色, 只保留了亮度接近的灰度值（即彩色变黑内）。在把data数组N写到imageData对象后，调用 putliuageData (>方法把图像数据绘制到両布上。最终得到了图像的黑白版。
+当然，通过操作原始像索值不仅能实现灰阶过滤，还能实现其他功能。要了解通过操作原始图像数 据实现过滤器的更多信息，请参考Ilmari Heikkincn的文章“Making Image Filters with Canvas”（基于 Canvas 的围像过滤器）：http:〃
+
+www.html5rocks.com/en/tutorials/canvas/imagefilters/。
+只有在画布“干净”的情况下（即图像并非来自其他域），才可以取得图像教据。 如果画布“不干净"，那么访问图像数据时会导致JavaScript错误。
+15.2.11 合成
+还名两个会应用到2D上下文中所有绘制操作的属性：globalAlpha和globalComposition- Operation。其中，globalAlpha是一个介于0和1之间的值（包括0和1),用于指定所有绘制的透 明度。默认值为0。如果所有后续操作都要基丁•相N的透明度，就可以先把glofcalAlpha设置为适当 值，然后绘制，最后再把它设置W默认值0。下面来看…个例子。
+//绘制紅色矩形
+context. fi-XlStylo = "t#ff0000"; context.fillRect(10, 10, 50, 50);
+//修改全局邊明度 context.globalAlpha * 0.5；
+//绘制蓝色矩形
+context. f illStyle = _'rgba(0,0,255,1) ■: context.fillRect{30, 30, 50, 50)；
+//重置全局透明度 context.globalAlpha = 0；
+2DGlobalA lphaExample01.htm
+在这个例子中，我们把蓝色矩形绘制到了红色矩形上面。因为在绘制蓝色矩形前，globalAlpha 已经被设置为0.5,所以蓝色矩形会呈现半透明效果，透过它可以看到下面的红色矩形。
+第二个诚性globalCompositionOperation表示后绘制的图形怎样与先绘制的图形结合。这个 属性的值是字符串，可能的值如下。
+source-over (默认值）：后绘制的图形位于先绘制的阁形上方。
+source-in:后绘制的图形与先绘制的图形重叠的部分对见，两者其他部分完全透明。
+口 S〇urce-〇ut:后绘制的图形4先绘制的图形不重叠的部分可见，先绘制的图形完全透明。
+scmrce-atop:后绘制的图形与先绘制的阁形承#的部分可见，先绘制图形不受影响。
+destination-over:后绘制的阁形位于先绘制的图形下方，只有之前透明像索f的部分才可见。
+destination-in:后绘制的图形位于先绘制的阁形下方，两者不重叠的部分完全透明。
+destinaCion-out:后绘制的图形擦除与先绘制的图形重叠的部分。
+destination-atop:后绘制的图形位于先绘制的图形下方，在两者不重叠的地方，先绘制的
+
+15.3 WebGL 463
+图形会变透明。
+lighter:后绘制的图形与先绘制的图形通释部分的值相加，使该部分变亮。
+copy:后绘制的图形完全替代与之重叠的先绘制图形。
+ xor:后绘制的图形与先绘制的图形*稃的部分执行或”操作。
+这个合成操作实际上用语立或者黑『彳图像是很难说清楚的。要了解每个操作的具体效果，请参见 
+
+https://developer.mozilla.org/samples/canvas-tutorial/6_l_canvas_composite.litml。推荐使用 IE9十或 Firefox 4+访问前面的网页，因为这两款浏览器对Canvas的f现最完善。下面来看一个例子。
+
+
+
+//绘制红色矩形
+context.fillStyle = n#ff0000";
+context -fillRect(10, 10, 50, 50);
+//设董合成換作
+context.globalCompositeOperation » "destination-over"；
+//绘制蓝色矩形
+context.fillStyle = "rgba(0,0,255,1)n； context.fillRect(30, 30, 50, 50)；
+2DGlobaICompositeQperationExample01 .htm
+如果不修改globalCompositionOperation，那么蓝色矩形应该位于红色矩形之上。但把 globalCompositionOperation 设:Ht为"destination-over’1 之后，红色矩形跑到了蓝色矩形上面。
+在使用globalCompositionOperation的情况下，一定要多测试‘典浏览器。因为不同浏览器 对这个属性的实现仍然存在较大的差别◊ Safari和Chrome在这方面还有问题，至于冇什么问题，大家 可以比较在打开上述页面的情况下，IE9+和Firefox 4十与它们有什么差异。
+WebGL
+WebGL是针对Canvas的3D上下文。与其他Web技术不同，WebGL并+是W3C制定的标准，而 是由KhronosGroup制定的。其官方网站是这样介绍的：“KhronosGroup是…个非盈利的由会员资助的 协会，专注于为并行计算以及各种平台和设备h的图形及动态媒体制定无版税的开放标准。” Khronos Group也设计了其他图形处理API,比如OpenGLES2.0。浏览器中使用的WebGL就是基于OpenGLES 2.0制定的。
+OpenGL等3D图形语言是非常复杂的，本书不可能介绍其中每一个概念。熟悉OpenGLES2.0的读 者可能会觉得WebGL更好理解一些，因为好多概念是相通的。
+本节将适当地介绍OpenGL ES 2.0的一些概念，尽力解释其中的某些部分在WebGL中的实现。要 全面了解 OpenGL,请访问 www.opengl.org。要全面学习 WebGL,请参考 www.leamingwebgi.com,其 中包含非常棒的系列教程
+15.3.1类型化数组
+WebGL涉及的复杂计算需要提前知道数值的精度，ifij标准的JavaScript数值无法满足需要。为此，
+①中文翻译版请参考 http:〃
+
+www.hiwebgl.com/?p=42。
+
+464 第15章使用Canvas绘图	
+WebGL引入了一个概念，叫类型化数组（typedarrays)。类型化数组也是数组，只不过其元素被设置为 特定类型的值。
+类型化数组的核心就是一个名为ArrayBuffer的类M。每个ArrayBuffer对象表示的只是内存 中指定的字节数，但+会指定这些字节用于保存什么类型的数据。通过ArrayBuffer所能做的，就是 为了将来使用而分配一定数暈的字节。例如，下面这行代码会在内存中分配20B。
+var buffer = new ArrayBuffer{20);
+创建了 ArrayBuffer对象后，能够通过该对象获得的信息只有它包含的字节数，方法是访问其 byteLength 属性：
+var bytes = buffer.byteLength;
+虽然ArrayBuffer对象本身没有多少可说的，但对WebGL 言，使用它是极其重要的。而且， 在涉及视图的时候，你才会发现它原来还是很有意思的。
+视围
+使用ArrayBuffer (数组缓冲器类型）的一种特别的方式就是用它来创建数组缓冲器视图。其中， 最常见的视图是DataView,通过它可以选择ArrayBuffer中一小段字谇。为此，可以在创建DataView 实例的时候传人一个ArrayBuffer、一个可选的字节偏移置（从该字节开始选择）和一个可选的要选 择的字节数。例如：
+//基于整个缓冲器创建一个新视a
+var view = new DataView(buffer)；
+//创建一个开始于字节9的新视图
+var view = new DataView(buffer, 9);
+//创建一个从字节9开始到字节18的新视图 var view = new DataView(buffer, 9, 10)；
+实例化之后，DataView对象会把字节偏移M以及字节长度信息分别保存在byteoffset和 byteLength 属性中〇
+alert(view.byteOffset)； alerc(view.byteLength);
+通过这两个属性可以在以后方便地了解视图的状态。另外，通过其buffer属性也可以取得数组缓 冲器。
+读取和写人Dataview的时候，要根据实际操作的数据类型，选择相应的getter和setter方法。下 表列出了 DataView支持的数据类塑以及相应的读写方法。
+
+15.3 WebGL 465
+所有这些方法的第十参数都是-个字节偏移童，表示要从哪个宇节开始读取或写人。不要忘了， 要保存有些数据类型的数据，可能需要不止1B。比如，无符号8位整数要用1B,而32位浮点数则要用 4B。使用DataView,就需要你自己来管理这些细节，即要明确知道自己的数据需要多少字节，外选择 正确的读写方法。例如：
+
+
+
+var buffer = new ArrayBuffer(20),
+view = new DataView(buffer),
+value;
+view.setUintl6(0, 25);
+view.setUintl6(2, 50); //不能从字节1开始，因为16位整数要用2B value = view.getuintl6(0);
+DataViewExample01.htm
+以上代码把两个无符号16位整数保存到了数组缓冲器中。因为每个16位整数要用2B,所以保存 第一个数的字节偏移量为0,时保存第二个数的字节偏移量为2。
+用于读写16位或更大数值的方法都有--个可选的参数litCleEndian。这个参数是一个布尔值， 表示读写数值时是否采用小端字节序（即将数据的最低有效位保存在低内存地址中），而不是大端字节 序（即将数据的最低有效位保存在高内存地址中)。如果你也不确定应该使用哪种字节序，那不用管它， 就采用默认的大端字节序方式保存即可。
+因为在这里使用的是字节偏移量，而非数组元素数,所以可以通过几种不同的方式来访问同一字节。 例如：
+
+
+
+var buffer = new ArrayBuffer(20), view = new DataView(buffer), value；
+view.setUint!6{0, 25); value = view.getlnt8(0)；
+alert(value); //0
+DataViewExampk02.htm
+在这个例子中，数值25以丨6位无符号整数的形式被写人，字节偏移量为0。然后，再以8位有符 号整数的方式读取该数据，得到的结果是0。这是因为25的二进制形式的前8位（第一个字节）全部是 0,如图15-14所示。
+
+466 第15章使用Canvas绘图
+卞节0	字节I
+I	
+I	[i	I
+|〇1〇|〇|〇1〇|〇|〇|〇|〇1〇|〇|〇|11〇|〇|1~|
+8位整数
+整数
+图 15-14
+可见，虽然DataView能it我们在字节级别上读写数组缓冲器中的数据，但我们必须卩己记住要将 数据保存到哪里，需要占用多少字节。这样一来，就会带来很多工作量，因此类型化视图也就应运而生。
+类型化视图
+类沏化视图一般也被称为类型化数组，因为它们除了元素必须是某种特定的数据类型外，与常规的 数组无异。类型化视图也分几种，而且它们都继承了 DataView。
+Int:8Array:表不8位二补整数。
+Uint8Array:表不8位无符*整数。
+Intl6Array:表不16位二补整数。
+Uintl6Array:表/K16位无符号整数。
+口 Int32Array:表系32位二补整数。
+CJint32Array:表示32位无符号整数。
+Float32Array :表水 32 位 IEEE 浮点值。
+口 Float 64Array:表;^ 64 位 IEEE 浮点值。
+每种视图类型都以不同的方式表示数据，而M—数据视选择的类型不NI有可能占用一或多字节。例 如，20B 的 ArrayBuffer 可以保存 20 个 Int8Array 或 Uint8Ar2：ay,或者 10 个 Intl6Array 或 Uint:16Array，或者 5 个 Int32Array、Uint:32Array 或 Float32Array，或者 2 个 Float64Array〇
+由于这些视图都继承A DataView，因而可以使用相同的构造函数参数来实例化。第一个参数是要 使用ArrayBuffer对象，第二个参数是作为起点的字节偏移童（默认为0)，第三个参数是要包含的字 节数。三个参数中只有第一个是必需的。卜'面来看几个例子。
+//创建一个新数组，使用整个缓冲器
+var inC8s * new IntQArray(buffer)?
+//只使用从字节9开始的缓冲器
+var intl6s = new Intl6Array(buffer, 9);
+//只使用从字节9到字节18的缓冲器
+var uintlSs = new Uintl6Array(buffer, 9, 10)；
+能够指定缓冲器中可用的字节段，意味着能在同一个缓冲器中保存不同类型的数值。比如，下面的 代码就是在缓冲器的开头保存8位整数，而在其他字节中保存16位整数。
+"使用缓冲器的一部分保存8位整數，另一部分保存16位整教 var int8s = new Int8Array(buffer, 0, 10)； var uintl6s = new Uintl6Array(buffer, 11, 10};
+每个视图构造函数都有一个名为BYTES_PER_ELEMENT的W性，表示类型化数组的每个元素需要多 少字节〇 因此，Ui_nt8Array*BYTES_PSR_ELEMENT 就是 1，而 Float32Array.BYTES一PER_ELEME：NT
+
+15,3 WebGL 467
+则为4。可以利用这个属性来辅助初始化。
+//需要10个元素空间
+var int8s = new Xnt8Array(buffer, 0, 10 * Int8Array.BYTES_PER_ELEMENT);
+//需要5个元素空间
+var uintlSs = new ’Jintl6Ai:ray《buffer, int8s.byteOffset + int8s.byteLength,
+5 * Uint16Array,BYTES_PER_ELEMENT);
+以上代码基于同一个数组缓冲器创建了两个视图。缓冲器的前10B用于保存8位整数，而其他字节 用于保存无符号16位整数。在初始化Uintl6Array的时候，使用了 Int8Array的byteOffset和 byteLength属性，以确保uintl6s开始于8位数据之后。
+如前所述，类型化视图的目的在于简化对二迸制数据的操作。除了前面看到的优点之外，创建类型 化视图还可以不用首先创建ArrayBuffer对象。只要传人希望数组保存的元素数，相应的构造函数就 可以自动创建一个包含足够字节数的ArrayBuf fer对象，例如：
+//创建一个数组保存10个8位整数（10字节） var int8s = new Int8Array(10);
+//创建一个数组保存10个16位螯數（20字节） var intl6s s new Intl6Array(10);
+另外，也可以把常规数组转换为类型化视图，只要把常规数组传人类s化视图的构造函数即可：
+//创建一个数组保存5个8位整數（10字节）
+var int8s = new Int8Array([10, 20, 30, 40, 50】）；
+这是用默认值来初始化类型化视图的最佳方式，也是WebGL项B中最常用的方式。
+以这种方式来使用类型化视图，可以让它们看起来更像Array对象，同时也能确保在读写信息的 时候使用正确的数据类型。
+使用类型化视图时，可以通过方括号语法访问每一个数据成员，可以通过length属性确定数组中 有多少元素。这样，对类型化视图的迭代与对Array对象的迭代就是一样的了。
+for (var i=0, len=int8s.length; i < len; i++){
+console.log("Value at position *+i+wis*+ int8s[i))；
+}
+当然，也可以使用方括号语法为类型化视阁的元素賦值。如果为相应元素指定的字节数放不下相应 的值，则实际保存的值是最大可能值的模。例如，无符号16位整数所能表示的最大数值是65535,如果 你想保存65536,那实际保存的值是0;如果你想保存65537,那实际保存的值是1,依此类推。
+var uintl6s = new Uintl6Array(10); uincl6s[0] = 65537； alert(uintl6s[0])； //I
+数据类铟不匹配时不会抛出错误，所以你必须自己保证所賦的值不会超过相应元素的字节限制。 类型化视图还有一个方法，即subarray(>,使用这个方法可以基于底层数组缓冲器的子集创建一 个新视图。这个方法接收两个参数：开始元素的索引和可选的结束元素的索引。返回的类铟与调用该方 法的视图类型相同。例如：
+var uintl6s = new Uintl6Array(10)# sub s uintl6s»subarr&y(2« 5);
+
+468 第15章使用Canvas绘图
+在以上代码中，sub也是Uintl6Array的一个实例，而fl底层与uintl6s都基于同一个 ArrayBuffer。通过大视图创建小视阁的主要好处就是，在操作大数组中的一部分元素时，无需担心意 外修改了并他元素。
+类铟化数组是WebGL项H中执行各种操作的重要基础。
+WebGL 上下文
+目前，在支持的浏览器屮，WebGL的名字叫"experimental-webgl%这是因为WebGL规范仍 然米制定完成。制定完成后，这个上下文的名字就会变成简单的”webgl%如果浏览器不支持WebGL, 那么取得该上下文时会返回mill。在使用WebGL上下文时，务必先检测一下返回值。
+var drawing = document.getElementById{"drawing")；
+//确定浏览器支持<〇31^35>元素 if (drawing.getContext){
+var gl s drawing.getContext("experimental-webglH);
+if (gl)<
+//使用 WebGL
+Web GLExample01.htm
+一般都把WebGL上下文对象命名为gl。大多数WebGL应用和示例都遵守这一约定，因为OpenGL ES2.0规定的方法和值通常都以"gl"开头。这样做也可以保证JavaScript代码与OpenGL程序更相近。
+取得了 WebGL 1:下文之后，就可以开始3D绘图了。如前所述，WebGL是OpenGLES 2.0的Web 版，因此本节讨论的概念实际上就是OpcnGL概念在JavaScript中的实现。
+通过给getContext ()传递第二个参数，可以为WebGL h下文设置一些选项。这个参数本身是一 个对象，可以包含下列属性。
+alpha:值为true，表示为上下文创建一个Alpha通道缓冲区；默认值为true。
+depth:值为true,表示可以使用16位深缓冲区；默认值为true。
+ stencil:值为true,表示可以使用8位模板缓冲区；默认值为false。
+antialias:值为true,表示将使用默认机制执行抗锯齿操作；默认值为tme。
+口 premultipliedAlpha:值为true,表示绘图缓冲区有预乘Alpha值；默认值为true。
+preserveDrawingBuffer:值为true,表示在绘图完成后保留绘阁缓冲区；默认值为false。 建议确实有必要的情况卜 开启这个值，因为可能影响性能。
+传递这个选项对象的方式如下：
+var drawing = document.getElementById{"drawing");
+//項定浏览器支持canvas元素 if (drawing.getContext){
+var gl s drawing.getContext(Mexperimental-webgln# { alpha: false))i if <〇l){
+//使用 W*bOL
+
+
+
+15.3 WebGL 469
+WebGLExampleOl. htm
+大多数上下文选项只在高级技巧中使用。很多时候，各个选项的默认值就能满足我们的要求。
+如果getContextO无法创建WebGL上下文，有的浏览器会抛出错误。为此，最好把调用封装到 一个 try-catch 块中。
+Insert IconMargin	[download]var drawing = document.getElementById{"drawing*),
+9l；
+//痛定浏览器支持<03取33>元素 if (drawing.getConLext){ try {
+gl = drawing.getContext("experimental-webgl”；
+catch (ex) {
+//什么也不做
+>
+if (gl)(
+//使用 WebGL } else {
+alert{"WebGL context could not be created.");
+
+
+
+WebGLExampleOl .htm
+常虽
+如果你熟悉OpenGL,那肯定会对各种操作中使用非常多的常量印象深刻。这些常最在OpenGL中 都带前缀GL_。在WebGL中，保存在上下文对象中的这些常量都没有GL_前缀。比如说， GL_COLOR_BUFFER_BIT 常量在 WebGL h下文中就是 gl .COLOr^BUFFER^BIT。WebGL 以这种方式支 持大多数OpenGL常量（有一部分常量是不支持的)。
+方法命名
+OpenGL (以及WebGL)中的很多方法都试图通过名字传达有关数据类型的信息。如果某方法可以 接收不同类型及不同数量的参数，看方法名的后缀就可以知道。方法名的后缀会包含参数个数（1到4) 和接收的数据类型（f表示浮点数，i表示整数)。例如，gl.unifom4fU意味着要接收4个浮点数， 而〇[1.11111£〇1：^31〇则表示要接收3个整数。
+也有很多方法接收数组参数而非一个个单独的参数。这样的方法其名字中会包含字母v (即vector, 矢量)。因此，gl.unif〇rin3iv()可以接收一个包含3个值的整数数组。请大家记住以上命名约定，这 样对理解后面关于WebGL的讨论很有帮助。
+准备绘图
+在实际操作WebGL上下文之前，一般都要使用某种实色清除canvas,为绘图做好准备。为此， 酋先必须使用clearcole^)方法来指定要使用的颜色值，该方法接收4个参数：红、绿、蓝和透明度。 每个参数必须是一个0到1之间的数值，表示每种分量在最终颜色中的强度。来看下面的例子。
+gl.clearColor(0# 0,0,1)； //black gl.clear(gl.COLOR_BUFPER_BIT);
+WebGLExampleOl. htm
+15
+
+470 第15章使用Canvas绘图 	
+以上代码把清理颜色缓冲区的值设S为黑色，然后调用了 c]ear(>方法，这个方法与OpenGL中的 glClear 等价。传人的参数gl .COIdBUFFER-BIT告诉WebGL使用之前定义的颜色来填充相应区 域。一般来说，都要先清理缓冲区，然后W执行其他绘图操作。
+视口与坐标
+开始绘图之前，通常要先定义WebGL的视n( viewport )。默认情况下，视口可以使用整个canvas K域。要改变视n大小，可以调用viewp〇rt()方法并传人4个参数：（视门相对于canvas元素的） x坐标、坐标、宽度和高度。例如，下面的调用就使用Tcanvas元素：
+gl .viewport (0, 0, drawing, width, drawing.height);
+视口坐标与我们通常熟悉的W页坐标不一样。视n坐标的原点(0,0)在<〇3出^3>元素的左下角，X 轴和:V轴的正方向分别是向右和向上，可以走义为(width-〗,height-1),如图15-15所示。
+canvas	(widths 1, height-1)
+(〇,〇)
+图 15-15
+知道怎么定义视口大小，就可以只在索的部分区域中绘图。来看下面的例子。
+//視口是<canvaf3>左下A的四分之一区域
+gl.viewport(〇y 0, drawing.width/2, drawing.height/2)；
+//视口是canvasA上廣的四分之一区域
+gl.viewport{0, drawing.height/2, drawing.width/2/ drawing.height/2)；
+//视口是canvasS下角的四分之一区域
+gl.viewport(drawing.width/2, 0, drawing.width/2, drawing.height/2)?
+另外，视u内部的坐标系与定义视口的坐标系也不一样。在视U内部，坐标原点(0,0)是视口的中心 点，因此视口左下角坐标为(-1,-1),而右上角坐标为(1,1),如图15-16所示。
+———	|(U)
+.(〇,〇)
+(-1-1)1	
+图 15-16
+如果在视n内部绘阁时使用视n外部的坐标，结果可能会被视口剪切。比如，要绘制的形状有一个 顶点在(U)，那么该形状在视口右侧的部分会被剪切掉。
+缓冲区
+顶点信息保存在JavaScript的类型化数组中，使用之前必须转换到WebGL的缓冲区。要创建缓冲K,
+
+15.3 WebGL 471
+可以调用gl.createBuffer(),然后使用gl.bindBuffer()绑定到WebGL上下文。这两步做完之 后，躭可以用数据来填充缓冲区了。例如：
+var buffer = gl.createBufferO ?
+gl.bindBuffer(gl.ARRAY—BUFFER, buffer);
+gl.bufferData{gl.ARRAY_BUFFER( new Float32Array([0, 0.5, 13), gl.STATIC_DRAW)；
+15
+调用gl.bindBufferO可以将buffer设置为上下文的当前缓冲K。此后，所有缓冲区操作都 直接在buffer中执行。因此，调用gl.bufferData()时不需要明确传人buffer也没有问题。最后 一行代码使用Float32Array中的数据初始化了 buffer( —般都是用Float32Array来保存顶点信 息）。如果想使用drawElementsO输出缓冲区的内容，也可以传人gl.ELEMENT_ARRAY_3tJFFER0 gl.bufferDataU的最后一个参数用于指定使用缓冲区的方式，取值范围是如下几个常量。
+gl.STATIC_DRAW:数据只加载一次，在多次绘图中使用。
+gl.STREAM_DRAW:数据只加载一次，在几次绘图中使用。
+gl.DYNAMIC_DRAW:数据动态改变，在多次绘图中使用。
+如果不是非常有经验的OpenGL程序员，多数情况下将缓冲区使用方式设置为gl.STATIC_DRAW 即可。
+在包含缓冲区的贞面電载之前，缓冲区始终保留在内存中。如果你不想要某个缓冲区了，可以直接 调用gl.deleteBuffer 〇释放内存：
+gl.deleteBuffer(buffer)?
+错误
+JavaScript与WebGL之间的一个最大的区别在于，WebGL操作一般不会抛出错误。为了知道是否 有错误发生，必须在调用某个可能出错的方法后，手工调用gl.getErrorO方法。这个方法返回一个 表示错误类型的常登。可能的错误常量如下。
+gl.NO_ERROR:上一次操作没有发生错误（值为0)。
+gl.INVALID_ENUM:应该给方法传人WebGL常量，俱却传错了参数。
+gl.INVALID_VALUE:在需要无符号数的地方传人了负值。
+gl.INVALID_OPERATION:在当前状态下不能完成操作。
+gl.OUT_OF_MEMORY:没有足够的内存完成操作。
+gl.CONTEXT_LOST_WEBGL:由于外部事件（如设备断电）干扰丢失了当前WebGL上下文。
+每次调用gl.getError()方法返回一个错误值。第一次调用后，后续对gl.getErrorU的调用
+可能会返回另一个错误值。如果发生了多个错误，需要反复调用gl.getErrorU直至它返回 gl.NOJRROR。在执行了很多操作的情况下，最好通过一个循环来调用getErrorO,如下所示：
+var errorCode = gl.getError(); while(errorCode){
+console.log("Error occurred： • + errorCode); errorCode = gl.getError()?
+}
+如果WebGL脚本输出不正确，那在脚本中放几行gl. getError (>有助于找出问题所在。
+着色器
+着色器（shader)是OpenGL中的另一个概念。WebGL中有两种着色器：顶点着色器和片段（或像 素）着色器。顶点着色器用于将3D顶点转换为需要浪染的2D点。片段着色器用于准确计算要绘制的
+
+472 第丨5章使用Canvas绘图
+每个像素的颜色。WebGL着色器的独特之处也是其难点在于，它们并不是用JavaScript写的。这些着色 器是使用 GLSL ( OpenGL Shading Language, OpenGL 若色语言）¥的，GLSL 是一种.4 C 和 JavaScript 完全不同的语H。
+编写着色器
+GLSL是一种类C语言，专门用于编写OpenGL着色器。W为WebGL是OpenGLES2.0的实现，所 以OpenGL中使用的着色器可以直接在WebGI.中使用。这样就方便丫将桌面图形应用移植到浏览器中。
+每个若色器都科一个main ()方法，该方法在绘阁期间会電复执行。为着色器传递数据的方式有两 种：Attribute和Uniform。通过Attribute可以向顶点着色器中传人顶点信息，通过Uniform可以向任何 着色器传入常M值。Attribute和Uniform在main 0方法外部定义，分别使用关键字attribute和 uniform。在这两个值类型关键字之后，是数据类型和变聚名。下面是一个简单的顶点着色器的例子。
+
+
+
+//OpenGL着色语言
+//着色器，4者Bartek Drozdz,摘自他的文幸
+//http：//
+
+www.necmagazine.com/tutorials/get-started-webgl-draw-square attribute vec2 aVertexPosition；
+void main() {
+gl_Position = vec4{aVertexPosition, 0.0, 1.0)；
+WebGLExample02.htm
+这个顶点若色雜定义了一个名为aVertexPosition的Attribute，这个Attribute是一个数组，包含 两个元索（数据类型为vec2)，表示^和^坐标。即使只接收到两个坐标，顶点着色器也必须把一个包 含四方面信息的顶点賦值给特殊变fi glPosition。这里的着色器创建了一个新的包含四个元素的数 组（vec4),填补缺失的坐标，结果是把2D坐标转换成了 3D坐标。
+除，只能通过Uniform传人数据外，片段着色器与顶点着色器类似。以下是片段着色器的例子。
+//OpenGL着色语言
+//着色器，4者Bartek Drozdz,摘自他的文章
+//http：//
+
+www.netmagazine.com/tutorials/get-started-webgl-draw-square uniform vec4 uColor?
+void main() {
+gl_FragColor ■= uColor;
+WebGLExampie02.htm
+片段着色器必须返回•个值，赋给变ftgl_Fra!3C〇l〇r,表示绘图时使用的颜色。这个着色器定义 了一个包含四方面信息（vec4)的统一的颜色ucolor。从以上代码看，这个着色器除了把传人的值賦 给gl_FragColor什么也没做。uColor的值在这个若色器内部不能改变。
+€
+OpenGL着色语言比这里看到的还要复杂。专门讲解这门语言的本有#•多，本节
+只是从辅助使用WebGL的角度简要介绍一下该语言。要了解更多信息，请参考Randi
+J. Rost 编著的 OpenGL ■SAadi'ng'ifiwgiwge (Addison-Wes丨ey,2006)。
+
+15.3 WebGL 473
+编写着色器程序
+浏览器不能理解GLSL程序，因此必须准备好字符中形式的GLSL程序，以便编译并链接到着色器 程序。为便于使用，通常是把着色器包含在页面的（scripts标签内,并为该标签指定一个L'』定义的type 属性。由于无法识别type属性值，浏览器不会解析<scriPt>标签中的内容，但这不影响你读写其中 的代码。例如：
+<script type= rx-webgl/x-vortex-shader" id^"vertexShader"> attribute vec2 aVertexPosition；
+void mainU (	.
+gX_Position s vec4(aVertexPosition, 0.0, 1.0)；
+)
+</8cript>
+<script type="x-webgl/x-fragment-shader" id="fragmentShador"> uniform vec4 uColor；
+void main() {
+gl_FragColor = uColor;
+}
+</script>
+WebGLExampIeG2.htm
+然后，可以通过text属性提取出^^化^元素的内容：
+var vertexGlsl = document.getElementById("vertexShader")-text,
+fragroentGlsl = document.getEXementByld("fragmentShader").text；
+复杂一些的WebGL应用可能会通过Ajax (详见第21章）动态加载着色器。闹使用着色器的关键是 要有字符串形式的GLSL程序。
+取得了 GLSL字符串之后，接下来就是创逮着色器对象。要创建着色器对象，可以调用gl.create- Shader (1方法并传人要仓！]建的着色器类型（gl. VERTEX_SHADER或gl .FRAGMENT_SHADER )。编译;色 器使用的是gl .compileShader U。请看下面的例子。
+var vertexShader = gl.createShader(gl,VERTEX_SHADER); gl.shacierSource(vertexShader, vertexGlsl)； gl.compileShader(vertexShader)；
+var fragmentShader = gl.createShader{gl.FRAGMENT_SHADER); gl.shaderSource(fragmentShader, fragmentGlsl)； gl.compileShader(fragmentShader)；
+WebGLExample02. him
+以上代码创建了两个着色器，并将它们分別保存在vertexShadei■和fragmentShader中。而使 用下列代码，可以把这两个对象链接到着色器程序中。
+var program = gl.createProgramU ； gl.attachShader(program, vertexShader); gl.attachShader(program, fragmentShader)； gl.linkProgram(program)；
+WebGLExample02.htm
+
+474 第15章使用Canvas绘图
+第一行代码创建了程序，然后调用attachShaderU方法又包含了两个着色器。最后调用gl.lintc- Program (>则把两个着色器封装到了变M program中。链接完程序之后，就可以通过gl .useProgram (> 方法通知WebGL使用这个程序了。
+gl.useProgram(prograra);
+调用gl.useProgramO方法后，所有后续的绘图操作都将使用这个程序。
+为着色器传入值
+前面定义的着色器都必须接收一个值才能T作。为了给着色器传人这个值，必须先找到要接收这个 值的变童。对于Uniform变量，可以使用gl.getUniformLocation(>，这个方法返回一个对象，表示 Uniform变量在内存中的位置。然后可以基于变最的位置来斌值。例如：
+var uColor = gl.getUniformLocation(program, "uColor"); gl.uniform4fv{uColor, [0, 0, 0, 1J);
+WebGLExampie02.htm
+第一行代码从program中找到Uniform变量ucolor，返回了它在内存中的位置。第二行代码使用 gl • uni f orm4 f v <)给 uColor 赋值。
+对于顶点着色器中的Attribute变量，也是差不多的賦值过程。要找到Attribute变置在内存中的位置, 可以调用gl.getAttribLocationU。取得广位S之后，就可以像下面这样賦值了：
+var aVertexPosition = gl.getAtcribLocation(program, "aVercexPosition"); gl.enableVertexAttribArray(aVertexPosition)；
+gl.vertexAttribPointer{aVertexPosition, itemSize, gl.FLOAT, false, 0, 0)；
+WebGLExampIe02.htm
+在此，我们取得了 aVertexPosition 的位置，然后乂通过 gl.enableVertexAttribArray() 启用它。最后一行创建了指针，指向由gl.bindBufferO指定的缓冲区，并将其保存在 aVertexPosition中，以便顶点着色器使用。
+调试着色器和程序
+与WebGL中的其他操作一样，着色器操作也可能会失败，而且也是静默失败。如果你想知道着色 器或程序执行中是否发生了错误，必须亲自询问WebGL上下文。
+对于着色器，可以在操作之后调用gl.getShaderParameter()，取得着色器的编译状态：
+if {!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUSJ}{ alert(gl.getShaderlnfoLog(vertexShader))?
+WebGLExample02.htm
+这个例子检测了 vertexShader的编译状态。如果着色器编译成功，调用gl.getShader- Parameter ()会返回true。如果返冋的是false，说明编译期间发生了错误，此时调用gl. getShader- Inf〇L〇g()并传人相应的着色器就可以取得错误消息。错误消息就是一个表示问题所在的字符串。无论 是顶点着色器，还是片段着色器，都可以使用gl .getShaderParameter 〇和gl .getShaderlnfoLog () 方法。
+
+15.3 WebGL 475
+程序也可能会执行失败，W此也冇类似的方法	gl.getProgramParameter(),可以用来检测
+执行状态。敁常见的程序失败发生在链接过程中，要检测链接错误，可以使用下列代码。
+if (!gl .getProgramParameter (prograir., gl.LINK__STATUS>) { alert (gl .getPrograrolnfoiiOg (program)} j
+}
+WebGLExampie02.htm
+与 gl.getShaderParameterO 类似，gl •getProgramParameterO 返同 true 表禾链接成功， 返回false表永链接失败。同样，也冇一个gl .getProgramlnfoLogO方法，用于捕获程序失败的 消息。
+以t介绍的这些方法主要在开发过程中用丁•调试。只要没有依赖外部代码，就可以放心地把它们从 产品代码中删除。
+绘图
+WebGL只能绘制三种形状：点、线和三角。其他所有形状都是由这三种基本形状合成之后，再绘 制到三维空间中的。执彳j■绘图操作要调用gl.cirawArrays U或gl.drawElemencs (>方法，前者用于 数组缓冲区，后者用于元素数组缓冲K。
+gl.drawArrays ()或gl.drawElements ()的第一个参数都是一个常域，表示要绘制的形状。可 取值的常M范围包括以下这些。
+gl.POIOTS:将紐个顶点成一个点来绘制。
+gl.LINES:将数组当成一系列顶点，在这些顶点间両线。每个顶点既是起点也是终点，因此数 组中必须包含偶数个顶点才能完成绘制。
+gl.LINE_LOOP:将数组当成一系列顶点，在这些顶点间jBi线。线条从第、个顶点到第二个顶点， 再从第二个顶点到第三个顶点，依此类推，直至最后一个顶点。然后再从最后一个顶点到第一 个顶点両一条线。结果就是一个形状的轮廊。
+gl.LINE_STRIP:除f不画最后一个顶点与笫一个顶点之间的线之外，其他与gl.LINE_LOOP 相同。
+gl.TRIANGLSS:将数姐$成一系列顶点，在这些顶点间绘制三角形。除非明确指定，每个三角 形都单独绘制，不与其他二角形并亨顶点。
+gl.TRIANGLES_STRIP:除广将前三个顶点之后的顶点1作第三个顶点与前两个顶点共同构成 一个新三角形外，其他都Ijgl.TRIANGLSS相同。例如，如果数组中包含A、B、C、D四个顶 点，则第•个三角形连接ABC,而第二个三角形连接BCD。
+gl. TRIANGLES_FAN.•除了将前三个顶点之后的顶点当作第三个顶点与前-•个顶点及第--个顶 点共同构成-个新三角形外，其他都与.TRIANGLES相丨司。例如，如果数组中包含A、B、C、 D四个顶点，则第一个三角形连接ABC,而第二个三角形连接ACD。
+gl.drawArraysO方法接收上面列出的常量中的一个作为第--个参数，接收数组缓冲区中的起始 索引作为第二个参数，接收数组缓冲区屮包含的顶点数（点的集合数）作为第三个参数。下面的代码使 用gl • drawArrays (>在両布上绘制T一个三角形。
+//假设已经使用本节前面定义的着色器清除了视〇 //定义三个顶点以及每个頂点的>{和y坐标
+
+476 第15章使用Canvas绘图
+var vertices = new Fioac32ArraY(E 〇, 1, lr -1, -1, -1 ]), buffer = gl.createBuffcr(), vertexSetSize = 2,
+vcrtexSetCount = vortices.length/vertcxSetSize# uColor, aVertexPosition；
+//把数据放到緩冲区
+gl.bindBuffer(gl.AHRAY_BUFFER/ buffer)；
+gl .buf fer3ata(gl. ARRAY_BU：-'FER, vertices, gl.STATTC_DRAW);
+//为片段着色器传入颜色值
+uColor = gl.getUnifomljocation《program, "uColor"); gl.uniform4fv(uColor, [0, 0, 0, 1 ])；
+//为着色器传入顶点信息
+aVertexPosition = gl.getAtc.ribLocation{program, 'aVGrtcxPosition")； gl.enableVertoxAttribArray(aVertexPosition)；
+gl.vcrtexAttribPointer{aVertexPosition, vertexSetSize, gl.FLOAT, false, 0, 0)；
+//绘制三角形
+gl.drawArrays{gl.TRIANGLES, 0, vcrtexSetCount)；
+WebGLExample02.htm
+这个例子定义了一个F:〇at32Array,包含H组顶点（每个顶点由两点表示)。这里关键是要知道 顶点的大小及数量，以便将来计箅时使用。把如rtexSetSize设置为2之后，就可以计算出 vertexSetCOLint的值。把顶点的倌息保存在缓冲K中后，又把颜色信息传给了片段着色器。
+接下来，给顶点着色器传入顶点大小以及gl.FLOAT,后者表示顶点坐标是浮点数。传人的第四个 参数是一个布尔值，false在此表ZR坐标不是标准化的〇第五个参数是步长值（stride value),表示取 得下一个值的时候，要跳过多少个数绀元索。除非你真需要跳过数组元素，否则传入0即可。最后一个 参数是起点偏移童，值为0表示从第-个元索开始。
+最后一步就是使用gl. drawArrays ()绘制三角形。传人gl. TRIANGLES作为第一个参数，表示在 (0,1)、（1,-1>和(-1,-1)点之间绘制三角形，并使用传给片段着色器的颜色来填充它。第二个参数是缓冲 区中的起点偏移M,最后-个参数是要读取的顶点总数。这次绘阁操作的结果如图15-17所示。
+
+
+
+图 15-17
+
+15.3 WebGL 477
+通过修改gl.drawArraysU的第一个参数，可以修改绘制角形的方式。图15-18展;？r< 了传人不 同的参数后可能得到的结果。
+
+
+
+
+
+
+m i5-i8
+纹理
+WebGL的纹理可以使用DOM中的阐像。要创建.一个新纹理，可以调用gl • createTexture (> , 然后再将…幅图像绑定到该纹理。如果图像尚未加载到内存中，可能需要创逮一个image对象的实例, 以便动态加载图像。图像加载完成之前，纹理不会初始化，因此，必须在load事件触发后才能设置纹 理。例如：
+var image = new Image{), texture；
+image.src = "smile.gif"；
+image.onload = function。{
+texture = gl.createTextureO ; gl.bindTexture(gl,TEXTURE_2D, texture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WSBGL/ true);
+gl.texImage2D(gl.TEXTURK_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTB# image); gl.texParameteri(gl.TEXTURE_2D# gl.TEXTURE一MAG一FILTER, gl.NEAREST)； gl.texParameteri(gl.TEXTURE_2D, gl.THXTURE_MIN_FILTER, gl.NEAREST};
+//清除当前纹理
+gl.bindTexture(gl.TEXTURE_2D, null);
+除了使用DOM中的图像之外，以上步骤与在OpenGL中创建纹理的步骤相同。最大的差异是使用 gl.pixelStorel(>设置像素存储格式。gl.UNPACK_FLIP_Y_WEBGL是WebGL独有的常量，在加载 Web中的阁像时，多数情况下都必须使用这个常量。这主要是因为GIF、JPEG和PNG图像与WebGL 使用的坐标系不一样，如果没有这个标志，解析图像时就会发生混乱。
+用作纹理的图像必须与包含'贞面来自同-个域，或者是保存在启用了 CORS(Cross-OriginResource Sharing,跨域资源共亨）的服务器上。第21章将讨论CORS。
+图像、加栽到<71(360>元素中的视频，甚至其他<03取33>元素都可以用作纹理。 跨域资源限制同样适用于视频。
+14.读取像素
+与2D上下文类似，通过WebGL上下文也能读取像素值。读取像素值的方法readPixelsU与 OpenGL中的同名方法只有一点不同，即最后一个参数必须是类型化数组。像素信息是从帧缓冲区读取
+
+478 第15章使用Canvas绘图
+的，然后保存在类S化数组屮。readPixelS()方法的参数有：；c、^、宽度、高度、图像格式、数据类 型和类型化数组〇前4个参数指定读取哪个区域屮的像素。图像格式参数儿乎总是gl.RGBA。数据类型 参数用于指定保存在类型化数组中的数据的类沏，但有以下限制。
+- [ ] 如果类型是g].UNSIGNS：)_BYTE,则类型化数姐必须是Uint8Array。
+- [ ] 如果类型是 gl. UNSIGNED_SHORT_5_6_5、gl. UNSIGNED_SHORT_4_4_4_4 或 gl • UNSIGNED_ SHOKT_5_5_5_l,则类型化数组必须足UintUArray。
+K面是一个简单的例子。
+var pixels = new Uint8Array(25*25);
+gl.readPixelstO, 0, 25, 2Sr gl.RGBA, gl.UNSIGNED一BYTE, pixels);
+以上代码从帧缓冲K中读取了 25x25像素的K域，将读取到的像索信息保存到了 pixels数组中。 艽中，每个像素的颜色由4个数组元素表示，分别代表红、绿、蓝和透明度。每个数组元素的值介于0 到255之间（包含0和255 )。不要忘了根据返凹的数据大小初始化类型化数组。
+在浏览器绘制更新的WebGL图像之前调用readPixelsO不会有什么意外。绘制发生后，帧缓冲 区会恢复其®始的下•净状态，而调用readPixelsU返回的像素数据反映的就是清除缓冲区后的状态。 如果你想在绘制发生后读取像素数据，那在初始化WebGL上下文时必须传人适当的 preserveDrawingBuffer 选项（前面讨论过）〇
+var gl = drawing.gecContext("experimental-webgl", { preserveDrawingBu£fer: true; })；
+设置这个标志的怠思是让帧缓冲K在下一次绘制之前，保留其最后的状态。这个选项会导致性能损 失，W此能不用最好不要用。
+15.3.3支持
+Firefox 4+和 Chrome 都实现了 WebGL API。Safari 5.1 也实现了 WebGL,佴默认是禁用的。WebGL 比较特别的地方在于，某个浏览器的某个版本实现了它，并不一定意味着就真能使用它。某个浏览器支 持WebGL,至少意味着两件事：首先，浏览器本身必须实现了 WebGL API;其次，计算机必须升级显 示驱动程序。运行Windows XP等操作系统的一些老机器，K驱动程序一般都不是最新的。因此，这些 汁算机中的浏览器都会禁用WebGL。从稳妥的角度考虑，在使用WebGL之前，最好检测其是否得到了 支持，而不是只检测特定的浏览器版本。
+大家别忘了，WebGL还是一个正在制定和发展中的规范。不管是函数名、函数签名，还是数据类 型，都有可能改变。可以说，WebGL目前只适合实验性地学习，不适合真正开发和应用。
+###  15.4 小结
+1171^5的<£：31^33>元素提供了一组JavaScript API,让我们可以动态地创建图形和图像。图形是在一 个特定的上下文中创建的，而上下文对象B前有两种。第一种是2D上下文，可以执行原始的绘图操作， 比如：
+- [ ] 设S填充、描边颜色和模式
+- [ ] 绘制矩形
+- [ ] 绘制路径
+- [ ] 绘制文本
+- [ ] 创建渐变和模式
+第二种是3D上F文，即WebGL上K文。WebGL是从OpenGLES2.0移植到浏览器中的，而OpenGL ES 2.0是游戏开发人员在创建计算机阁形阁像时经常使用的一种语言。WebGL支持比2D上下文更丰富 和更强大的图形图像处理能力，比如：
+- [ ] 用GLSL (OpenGL Shading Language, OpenGL着色语言）编写的顶点和片段着色器 
+- [ ] 支持类铟化数组，即能够将数组中的数据限定为某种特定的数值类哦 
+- [ ] 创建和操作纹理
+H前，主流浏览器的较新版本大都已经支持canvas标签。同样地，这些版本的浏览器基本上也 都支持2D上下文。倂对于WebGL WVf, B前还只有Firefox 4+和Chrome支持它。  
+[上一章](https://github.com/qianjilou/javascript3/blob/master/chapter/chapter14.md)&emsp;&emsp;[下一章](https://github.com/qianjilou/javascript3/blob/master/chapter/chapter16.md)
