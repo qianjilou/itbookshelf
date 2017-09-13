@@ -150,7 +150,7 @@
 17.9 键盘事件  
 ## 第18章 脚本化HTTP  
 18.1 使用XMLHttpRequest  
-18.2 借助<script>发送HTTP请求：JSONP  
+18.2 借助script发送HTTP请求：JSONP  
 18.3 基于服务器端推送事件的Comet技术  
 ## 第19章 jQuery类库  
 19.1 jQuery基础  
@@ -172,7 +172,7 @@
 21.1 脚本化图片  
 21.2 脚本化音频和视频  
 21.3 SVG：可伸缩的矢量图形  
-21.4 <canvas>中的图形  
+21.4 canvas中的图形  
 ## 第22章 HTML5 API  
 22.1 地理位置  
 22.2 历史记录管理  
@@ -183,7 +183,7 @@
 22.7 文件系统API  
 22.8 客户端数据库  
 22.9 Web套接字  
-第三部分 JavaScript核心参考
+## 第三部分 JavaScript核心参考
 JavaScript核心参考 711
-第四部分 客户端JavaScript参考
+## 第四部分 客户端JavaScript参考
 客户端JavaScript参考 847
