@@ -44,8 +44,8 @@
 5.6 跳转  
 5.7 其他语句类型  
 5.8 JavaScript语句小结  
-## 第6章 对象  
-6.1 创建对象  
+## [第6章 对象](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/6.%E5%AF%B9%E8%B1%A1.md#第6章-对象)
+###  [6.1 创建对象](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/6.%E5%AF%B9%E8%B1%A1.md#61-创建对象)
 6.2 属性的查询和设置  
 6.3 删除属性  
 6.4 检测属性  
