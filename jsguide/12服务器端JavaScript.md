@@ -1,4 +1,4 @@
-# 第12章 服务器端JavaScript  
+# [第12章 服务器端JavaScript](https://github.com/qianjilou/mybookshelf/tree/master/jsguide)
 前面的章节已经详细介绍了JavaScripi语言核心。我们即将开始本书的第一部分，该部分
 会介绍JavaScript嵌人Web浏览器的原理，并袖盖庞杂的客户端JavaScript API。可以说
 JavaScript是基于Web的编程语言，因为绝大部分JavaScript代码悬为Web浏览器而编写。
