@@ -1,16 +1,16 @@
-# javascript权威指南(第6版)
+## javascript权威指南(第6版)
 
-## 第1章 JavaScript概述  
-1.1 JavaScript语言核心  
-1.2 客户端JavaScript  
+### [第1章 JavaScript概述](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/1.JavaScript%E6%A6%82%E8%BF%B0.md#第1章-javascript概述)  
+####  [1.1 JavaScript语言核心](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/1.JavaScript%E6%A6%82%E8%BF%B0.md#11-javascript语言核心-1)
+####  [1.2 客户端JavaScript](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/1.JavaScript%E6%A6%82%E8%BF%B0.md#12-客户端javascript-1)
 第一部分 JavaScript 语  
-## 第2章 词法结构  
+### 第2章 词法结构  
 2.1 字符集  
 2.2 注释  
 2.3 直接量  
 2.4 标识符和保留字  
 2.5 可选的分号  
-## 第3章 类型、值和变量  
+### 第3章 类型、值和变量  
 3.1 数字  
 3.2 文本  
 3.3 布尔值  
@@ -44,8 +44,8 @@
 5.6 跳转  
 5.7 其他语句类型  
 5.8 JavaScript语句小结  
-## 第6章 对象  
-6.1 创建对象  
+## [第6章 对象](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/6.%E5%AF%B9%E8%B1%A1.md#第6章-对象)
+###  [6.1 创建对象](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/6.%E5%AF%B9%E8%B1%A1.md#61-创建对象)
 6.2 属性的查询和设置  
 6.3 删除属性  
 6.4 检测属性  
