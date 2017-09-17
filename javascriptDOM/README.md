@@ -1,189 +1,192 @@
-##  第1章 JavaScript简史
-1.1 JavaScript的起源
-1.2 DOM
-1.3 浏览器战争
-1.3.1 DHTML
-1.3.2 浏览器之间的冲突
-1.4 制定标准
-1.4.1 浏览器以外的考虑
-1.4.2 浏览器战争的结局
-1.4.3 崭新的起点
-1.5 小结
-##  第2章 JavaScript语法
-2.1 准备工作
-2.2 语法
-2.2.1 语句
-2.2.2 注释
-2.2.3 变量
-2.2.4 数据类型
-2.2.5 数组
-2.2.6 对象
-2.3 操作
-2.4 条件语句
-2.4.1 比较操作符
-2.4.2 逻辑操作符
-2.5 循环语句
-2.5.1 while循环
-2.5.2 for循环
-2.6 函数
-2.7 对象
-2.7.1 内建对象
-2.7.2 宿主对象
-2.8 小结
-##  第3章 DOM
-3.1 文档：DOM中的“D”
-3.2 对象：DOM中的“O”
-3.3 模型：DOM中的“M”
-3.4 节点
-3.4.1 元素节点
-3.4.2 文本节点
-3.4.3 属性节点
-3.4.4 CSS
-3.4.5 获取元素
-3.4.6 盘点知识点
-3.5 获取和设置属性
-3.5.1 getAttribute
-3.5.2 setAttribute
-3.6 小结
-##  第4章 案例研究：JavaScript图片库
-4.1 标记
-4.2 JavaScript
-4.2.1 非DOM解决方案
-4.2.2 最终的函数代码清单
-4.3 应用这个JavaScript函数
-4.4 对这个函数进行扩展
-4.4.1 childNodes属性
-4.4.2 nodeType属性
-4.4.3 在标记里增加一段描述
-4.4.4 用JavaScript改变这段描述
-4.4.5 nodeValue属性
-4.4.6 firstChild和lastChild属性
-4.4.7 利用nodeValue属性刷新这段描述
-4.5 小结
-##  第5章 最佳实践
-5.1 过去的错误
-5.1.1 不要怪罪JavaScript
-5.1.2 Flash的遭遇
-5.1.3 质疑一切
-5.2 平稳退化
-5.2.1 “javascript:”伪协议
-5.2.2 内嵌的事件处理函数
-5.2.3 谁关心这个
-5.3 向CSS学习
-5.3.1 结构与样式的分离
-5.3.2 渐进增强
-5.4 分离JavaScript
-5.5 向后兼容
-5.5.1 对象检测
-5.5.2 浏览器嗅探技术
-5.6 性能考虑
-5.6.1 尽量少访问DOM和尽量减少标记
-5.6.2 合并和放置脚本
-5.6.3 压缩脚本
-5.7 小结
-##  第6章 案例研究：图片库改进版
-6.1 快速回顾
-6.2 它支持平稳退化吗
-6.3 它的JavaScript与HTML标记是分离的吗
-6.3.1 添加事件处理函数
-6.3.2 共享onload事件
-6.4 不要做太多的假设
-6.5 优化
-6.6 键盘访问
-6.7 把JavaScript与CSS结合起来
-6.8 DOM Core和HTML-DOM
-6.9 小结
-##  第7章 动态创建标记
-7.1 一些传统方法
-7.1.1 document.write
-7.1.2 innerHTML属性
-7.2 DOM方法
-7.2.1 createElement方法
-7.2.2 appendChild方法
-7.2.3 createTextNode方法
-7.2.4 一个更复杂的组合
-7.3 重回图片库
-7.3.1 在已有元素前插入一个新元素
-7.3.2 在现有方法后插入一个新元素
-7.3.3 图片库二次改进版
-7.4 Ajax
-7.4.1 XMLHttpRequest对象
-7.4.2 渐进增强与Ajax
-7.4.3 Hijax
-7.5 小结
-##  第8章 充实文档的内容
-8.1 不应该做什么
-8.2 把“不可见”变成“可见”
-8.3 内容
-8.3.1 选用HTML、XHTML还是HTML5
-8.3.2 CSS
-8.3.3 JavaScript
-8.4 显示“缩略语列表”
-8.4.1 编写displayAbbreviations函数
-8.4.2 创建标记
-8.4.3 一个浏览器“地雷”
-8.5 显示“文献来源链接表”
-8.6 显示“快捷键清单”
-8.7 检索和添加信息
-8.8 小结
-##  第9章 CSS-DOM
-9.1 三位一体的网页
-9.1.1 结构层
-9.1.2 表示层
-9.1.3 行为层
-9.1.4 分离
-9.2 style属性
-9.2.1 获取样式
-9.2.2 设置样式
-9.3 何时该用DOM脚本设置样式
-9.3.1 根据元素在节点树里的位置来设置样式
-9.3.2 根据某种条件反复设置某种样式
-9.3.3 响应事件
-9.4 className属性
-9.5 小结
-##  第10章 用JavaScript实现动画效果
-10.1 动画基础知识
-10.1.1 位置
-10.1.2 时间
-10.1.3 时间递增量
-10.1.4 抽象
-10.2 实用的动画
-10.2.1 提出问题
-10.2.2 解决问题
-10.2.3 CSS
-10.2.4 JavaScript
-10.2.5 变量作用域问题
-10.2.6 改进动画效果
-10.2.7 添加安全检查
-10.2.8 生成HTML标记
-10.3 小结
-##  第11章 HTML5
-11.1 HTML5简介
-11.2 来自朋友的忠告
-11.3 几个示例
-11.3.1 Canvas
-11.3.2 音频和视频
-11.3.3 表单
-11.4 HTML5还有其他特性吗
-11.5 小结
-##  第12章 综合示例
-12.1 项目简介
-12.1.1 原始资料
-12.1.2 站点结构
-12.1.3 页面结构
-12.2 设计
-12.3 CSS
-12.3.1 颜色
-12.3.2 布局
-12.3.3 版式
-12.4 标记
-12.5 JavaScript
-12.5.1 页面突出显示
-12.5.2 JavaScript幻灯片
-12.5.3 内部导航
-12.5.4 JavaScript图片库
-12.5.5 增强表格
-12.5.6 增强表单
-12.5.7 压缩代码
-12.6 小结
-附录 JavaScript库
+# JavaScript Dom编程艺术
+
+- [简介](README.md)
+- [第1章 JavaScript简史](chapter1.md)
+  - [1.1 JavaScript的起源](chapter1.md#11)
+  - [1.2 DOM](chapter1.md#12)
+  - [1.3 浏览器战争](chapter1.md#13)
+    - [1.31 DHTML](chapter1.md#131)
+    - [1.32 浏览器之间的冲突](chapter1.md#132)
+  - [1.4 制定标准](chapter1.md#14)
+    - [1.41 浏览器以外的考虑](chapter1.md#141)
+    - [1.42 浏览器战争的结局](chapter1.md#142)
+    - [1.43 崭新的起点](chapter1.md#143)
+  - [1.5 小结](chapter1.md#15)
+- [第2章 JavaScript语法](chapter2.md)
+  - [2.1 准备工作](chapter2.md#21)
+  - [2.2 语法](chapter2.md#22)
+    - [2.21 语句](chapter2.md#221)
+    - [2.22 注释](chapter2.md#222)
+    - [2.23 变量](chapter2.md#223)
+    - [2.24 数据类型](chapter2.md#224)
+    - [2.25 数组](chapter2.md#225)
+    - [2.26 对象](chapter2.md#226)
+  - [2.3 操作](chapter2.md#23)
+  - [2.4 条件语句](chapter2.md#24)
+    - [2.41 比较操作符](chapter2.md#241)
+    - [2.42 逻辑操作符](chapter2.md#242)
+  - [2.5 循环语句](chapter2.md#25)
+    - [2.51 while循环](chapter2.md#251)
+    - [2.52 for循环](chapter2.md#252)
+  - [2.6 函数](chapter2.md#26)
+  - [2.7 对象](chapter2.md#27)
+    - [2.71 内建对象](chapter2.md#271)
+    - [2.72 宿主对象](chapter2.md#272)
+  - [2.8 小结](chapter2.md#28)
+- [第3章 DOM](chapter3.md)
+  - [3.1 文档：DOM中的“D”](chapter3.md#31)
+  - [3.2 对象：DOM中的“O”](chapter3.md#32)
+  - [3.3 模型：DOM中的“M”](chapter3.md#33)
+  - [3.4 节点](chapter3.md#34)
+    - [3.41 元素节点](chapter3.md#341)
+    - [3.42 文本节点](chapter3.md#342)
+    - [3.43 属性节点](chapter3.md#343)
+    - [3.44 CSS](chapter3.md#344)
+    - [3.45 获取元素](chapter3.md#345)
+    - [3.46 盘点知识点](chapter3.md#346)
+  - [3.5 获取和设置属性](chapter3.md#35)
+    - [3.51 getAttribute](chapter3.md#351)
+    - [3.52 setAttribute](chapter3.md#352)
+  - [3.6 小结](chapter3.md#36)
+- [第4章 案例研究：JavaScript图片库](chapter4.md)
+  - [4.1 标记](chapter4.md#41)
+  - [4.2 JavaScript](chapter4.md#42)
+    - [4.2.1 非DOM解决方案](chapter4.md#42.)
+    - [4.2.2 最终的函数代码清单](chapter4.md#42.)
+  - [4.3 应用这个JavaScript函数](chapter4.md#43)
+  - [4.4 对这个函数进行扩展](chapter4.md#44)
+    - [4.41 childNodes属性](chapter4.md#441)
+    - [4.42 nodeType属性](chapter4.md#442)
+    - [4.43 在标记里增加一段描述](chapter4.md#443)
+    - [4.44 用JavaScript改变这段描述](chapter4.md#444)
+    - [4.45 nodeValue属性](chapter4.md#445)
+    - [4.46 firstChild和lastChild属性](chapter4.md#446)
+    - [4.47 利用nodeValue属性刷新这段描述](chapter4.md#447)
+  - [4.5 小结](chapter4.md#45)
+- [第5章 最佳实践](chapter5.md)
+  - [5.1 过去的错误](chapter5.md#51)
+    - [5.11 不要怪罪JavaScript](chapter5.md#511)
+    - [5.12 Flash的遭遇](chapter5.md#512)
+    - [5.13 质疑一切](chapter5.md#513)
+  - [5.2 平稳退化](chapter5.md#52)
+    - [5.21 “javascript:”伪协议](chapter5.md#521)
+    - [5.22 内嵌的事件处理函数](chapter5.md#522)
+    - [5.23 谁关心这个](chapter5.md#523)
+  - [5.3 向CSS学习](chapter5.md#53)
+    - [5.31 结构与样式的分离](chapter5.md#531)
+    - [5.32 渐进增强](chapter5.md#532)
+  - [5.4 分离JavaScript](chapter5.md#54)
+  - [5.5 向后兼容](chapter5.md#55)
+    - [5.51 对象检测](chapter5.md#551)
+    - [5.52 浏览器嗅探技术](chapter5.md#552)
+  - [5.6 性能考虑](chapter5.md#56)
+    - [5.61 尽量少访问DOM和尽量减少标记](chapter5.md#561)
+    - [5.62 合并和放置脚本](chapter5.md#562)
+    - [5.63 压缩脚本](chapter5.md#563)
+ - [5.7 小结](chapter5.md#57)
+- [第6章 案例研究：图片库改进版](chapter6.md)
+  - [6.1 快速回顾](chapter6.md#61)
+  - [6.2 它支持平稳退化吗](chapter6.md#62)
+  - [6.3 它的JavaScript与HTML标记是分离的吗](chapter6.md#63)
+    - [6.31 添加事件处理函数](chapter6.md#631)
+      - [6.32 共享onload事件](chapter6.md#632)
+  - [6.4 不要做太多的假设](chapter6.md#64)
+  - [6.5 优化](chapter6.md#65)
+  - [6.6 键盘访问](chapter6.md#66)
+  - [6.7 把JavaScript与CSS结合起来](chapter6.md#67)
+  - [6.8 DOM Core和HTML-DOM](chapter6.md#68)
+  - [6.9 小结](chapter6.md#69)
+- [第7章 动态创建标记](chapter7.md)
+  - [7.1 一些传统方法](chapter7.md#71)
+    - [7.11 document.write](chapter7.md#711)
+    - [7.12 innerHTML属性](chapter7.md#712)
+  - [7.2 DOM方法](chapter7.md#72)
+    - [7.21 createElement方法](chapter7.md#721)
+    - [7.22 appendChild方法](chapter7.md#722)
+    - [7.23 createTextNode方法](chapter7.md#723)
+    - [7.24 一个更复杂的组合]() chapter7.md#724 
+  - [7.3 重回图片库](chapter7.md#73)
+    - [7.31 在已有元素前插入一个新元素](chapter7.md#731)
+    - [7.32 在现有方法后插入一个新元素](chapter7.md#732)
+    - [7.33 图片库二次改进版](chapter7.md#733)
+  - [7.4 Ajax](chapter7.md#74)
+    - [7.41 XMLHttpRequest对象](chapter7.md#741)
+    - [7.42 渐进增强与Ajax](chapter7.md#742)
+    - [7.43 Hijax](chapter7.md#743)
+  - [7.5 小结](chapter7.md#75)
+- [第8章 充实文档的内容](chapter8.md)
+  - [8.1 不应该做什么](chapter8.md#81)
+  - [8.2 把“不可见”变成“可见”](chapter8.md#82)
+  - [8.3 内容](chapter8.md#83)
+    - [8.31 选用HTML、XHTML还是HTML5](chapter8.md#831)
+    - [8.32 CSS](chapter8.md#832)
+    - [8.33 JavaScript](chapter8.md#833)
+  - [8.4 显示“缩略语列表”](chapter8.md#84)
+    - [8.41 编写displayAbbreviations函数](chapter8.md#841)
+    - [8.42 创建标记](chapter8.md#842)
+    - [8.43 一个浏览器“地雷”](chapter8.md#843)
+  - [8.5 显示“文献来源链接表”](chapter8.md#85)
+  - [8.6 显示“快捷键清单”](chapter8.md#86)
+  - [8.7 检索和添加信息](chapter8.md#87)
+  - [8.8 小结](chapter8.md#88)
+- [第9章 CSS-DOM](chapter9.md)
+  - [9.1 三位一体的网页](chapter9.md#91)
+    - [9.11 结构层](chapter9.md#911)
+    - [9.12 表示层](chapter9.md#912)
+    - [9.13 行为层](chapter9.md#913)
+    - [9.14 分离](chapter9.md#914)
+  - [9.2 style属性](chapter9.md#92)
+    - [9.21 获取样式](chapter9.md#921)
+    - [9.22 设置样式](chapter9.md#922)
+  - [9.3 何时该用DOM脚本设置样式](chapter9.md#93)
+    - [9.31 根据元素在节点树里的位置来设置样式](chapter9.md#931)
+    - [9.32 根据某种条件反复设置某种样式](chapter9.md#932)
+    - [9.33 响应事件](chapter9.md#933)
+  - [9.4 className属性](chapter9.md#94)
+  - [9.5 小结](chapter9.md#95)
+- [第10章 用JavaScript实现动画效果](chapter10.md)
+  - [10.1 动画基础知识](chapter10.md#101)
+    - [10.11 位置](chapter10.md#1011)
+    - [10.12 时间](chapter10.md#1012)
+    - [10.13 时间递增量](chapter10.md#1013)
+    - [10.14 抽象](chapter10.md#1014)
+  - [10.2 实用的动画](chapter10.md#102)
+    - [10.21 提出问题](chapter10.md#1021)
+    - [10.22 解决问题](chapter10.md#1022)
+    - [10.23 CSS](chapter10.md#1023)
+    - [10.24 JavaScript](chapter10.md#1024)
+    - [10.25 变量作用域问题](chapter10.md#1025)
+    - [10.26 改进动画效果](chapter10.md#1026)
+    - [10.27 添加安全检查](chapter10.md#1027)
+    - [10.28 生成HTML标记](chapter10.md#1028)
+  - [10.3 小结](chapter10.md#103)
+- [第11章 HTML5](chapter11.md)
+  - [11.1 HTML5简介](chapter11.md#111)
+  - [11.2 来自朋友的忠告](chapter11.md#112)
+  - [11.3 几个示例](chapter11.md#113)
+    - [11.31 Canvas](chapter11.md#1131)
+    - [11.32 音频和视频](chapter11.md#1132)
+    - [11.33 表单](chapter11.md#1133)
+  - [11.4 HTML5还有其他特性吗](chapter11.md#114)
+  - [11.5 小结](chapter11.md#115)
+- [第12章 综合示例](chapter12.md)
+  - [12.1 项目简介](chapter12.md#121)
+    - [12.11 原始资料](chapter12.md#1211)
+    - [12.12 站点结构](chapter12.md#1212)
+    - [12.13 页面结构](chapter12.md#1213)
+  - [12.2 设计](chapter12.md#122)
+  - [12.3 CSS](chapter12.md#123)
+    - [12.31 颜色](chapter12.md#1231)
+    - [12.32 布局](chapter12.md#1232)
+    - [12.33 版式](chapter12.md#1233)
+  - [12.4 标记](chapter12.md#124)
+  - [12.5 JavaScript](chapter12.md#125)
+    - [12.51 页面突出显示](chapter12.md#1251)
+    - [12.52 JavaScript幻灯片](chapter12.md#1252)
+    - [12.53 内部导航](chapter12.md#1253)
+    - [12.54 JavaScript图片库](chapter12.md#1254)
+    - [12.55 增强表格](chapter12.md#1255)
+    - [12.56 增强表单](chapter12.md#1256)
+    - [12.57 压缩代码](chapter12.md#1257)
+  - [12.6 小结](chapter12.md#126)  
+附录 JavaScript库 265
