@@ -1,4 +1,4 @@
-## javascript权威指南(第6版)
+## [javascript权威指南(第6版)](https://github.com/qianjilou/itbookshelf/tree/master/jsguide)
 
 ### [第1章 JavaScript概述](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/01.JavaScript%E6%A6%82%E8%BF%B0.md)  
 ####  [1.1 JavaScript语言核心](https://github.com/qianjilou/mybookshelf/blob/master/jsguide/1.JavaScript%E6%A6%82%E8%BF%B0.md#11-javascript语言核心-1)
