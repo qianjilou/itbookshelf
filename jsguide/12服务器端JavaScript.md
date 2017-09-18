@@ -1,4 +1,9 @@
 ## [第12章 服务器端JavaScript](https://github.com/qianjilou/itbookshelf/tree/master/jsguide)  
+###  [12.1 用Rhino脚本化Java](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#121-%E7%94%A8rhino%E8%84%9A%E6%9C%AC%E5%8C%96java)
+###  [12.2 用Node实现异步I/O](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#122-%E7%94%A8node%E5%AE%9E%E7%8E%B0%E5%BC%82%E6%AD%A5io)
+
+---
+
 前面的章节已经详细介绍了JavaScripi语言核心。我们即将开始本书的第一部分，该部分
 会介绍JavaScript嵌人Web浏览器的原理，并袖盖庞杂的客户端JavaScript API。可以说
 JavaScript是基于Web的编程语言，因为绝大部分JavaScript代码悬为Web浏览器而编写。
@@ -26,7 +31,7 @@ www.github.com/joyent/node!wikilFAQ。
  
 ---
 
-##  12.1 用Rhino脚本化Java
+##  [12.1 用Rhino脚本化Java](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#%E7%AC%AC12%E7%AB%A0-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFjavascript)
 Rhina是一种用Java编写的JavaScript解释器，其设计目标是借助丁强大的Java平台API实
 现轻松编写JavaScript程序。Rhino能白动完成JavaScript原生类型的Java原生类型之间的
 稍互转换，因此JavaScript脚本可以设置、查询Java属性，并调用Java方祛。
@@ -375,7 +380,7 @@ function download(url, file) {
 
 ```
 
-##  12.2 用Node实现异步I/O  
+##  [12.2 用Node实现异步I/O](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#%E7%AC%AC12%E7%AB%A0-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFjavascript)
 
 Node是基丁C++的尚速JavaScript解释器，绑定了用丁进程、文仆和网络套接字等底层
 Unix API,还绑定了HTTP客户端和服务器API。除了一些专门命名的同步方壮外，Node
@@ -671,7 +676,7 @@ stream.on("end",function(data){ console.1og("Connection closed"); }};
 译注5: * 于shebang的详细鲜释谚查看http:/h.wkipedia org/wilShebang.
 服务器端JavaScript| 301
 
-###  12.2.1 Node示例:HTTP服务器  
+###  [12.2.1 Node示例:HTTP服务器](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#%E7%AC%AC12%E7%AB%A0-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFjavascript)
 
 例12-2是一个基于Nodc的简单HTTP服务。它能处理当前目录的文件，并能实现两种特
 殊的URL。它使用了Node的“h(tp”模块，也会使用到前面提到的文件和流API。第18
@@ -764,7 +769,7 @@ server.on("request", function (request, response) {
 });
 ```
 
-###  12.2.2 Node示例: HTTP客户端工具模块  
+###  [12.2.2 Node示例: HTTP客户端工具模块](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#%E7%AC%AC12%E7%AB%A0-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFjavascript)
 
 例12-3使用“http" 榄块定义了用于发送HTTP GET和POST请求的工具函数。本例则是
 基于“ttputils" 榄块，在代码中应该这样使用;
