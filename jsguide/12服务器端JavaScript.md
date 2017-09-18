@@ -1,4 +1,4 @@
-# [第12章 服务器端JavaScript](https://github.com/qianjilou/mybookshelf/tree/master/jsguide)
+# 第12章 服务器端JavaScript  
 前面的章节已经详细介绍了JavaScripi语言核心。我们即将开始本书的第一部分，该部分
 会介绍JavaScript嵌人Web浏览器的原理，并袖盖庞杂的客户端JavaScript API。可以说
 JavaScript是基于Web的编程语言，因为绝大部分JavaScript代码悬为Web浏览器而编写。
@@ -671,7 +671,7 @@ stream.on("end",function(data){ console.1og("Connection closed"); }};
 译注5: * 于shebang的详细鲜释谚查看http:/h.wkipedia org/wilShebang.
 服务器端JavaScript| 301
 
-###  12.2.1Node示例:HTTP服务器  
+###  12.2.1 Node示例:HTTP服务器  
 
 例12-2是一个基于Nodc的简单HTTP服务。它能处理当前目录的文件，并能实现两种特
 殊的URL。它使用了Node的“h(tp”模块，也会使用到前面提到的文件和流API。第18
