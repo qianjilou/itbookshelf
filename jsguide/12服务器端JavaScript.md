@@ -1,6 +1,6 @@
 ## [第12章 服务器端JavaScript](https://github.com/qianjilou/itbookshelf/tree/master/jsguide)  
-###  [12.1 用Rhino脚本化Java](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#121-%E7%94%A8rhino%E8%84%9A%E6%9C%AC%E5%8C%96java)
-###  [12.2 用Node实现异步I/O](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#122-%E7%94%A8node%E5%AE%9E%E7%8E%B0%E5%BC%82%E6%AD%A5io)
+###  [12-1 用Rhino脚本化Java](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#121-%E7%94%A8rhino%E8%84%9A%E6%9C%AC%E5%8C%96java)
+###  [12-2 用Node实现异步I/O](https://github.com/qianjilou/itbookshelf/blob/master/jsguide/12%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AFJavaScript.md#122-%E7%94%A8node%E5%AE%9E%E7%8E%B0%E5%BC%82%E6%AD%A5io)
 
 ---
 
