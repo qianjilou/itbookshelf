@@ -1,6 +1,6 @@
                     
 ### 第1部分 web开发入门篇
-#### [第1章 lamp网站构建](../content/1_01_lamp%E7%BD%91%E7%AB%99%E6%9E%84%E5%BB%BA.md)
+#### [第1章 lamp网站构建](./content/1_01_lamp%E7%BD%91%E7%AB%99%E6%9E%84%E5%BB%BA.md)
 #### [第2章 html的设计与应用](https://github.com/qianjilou/itbookshelf/blob/master/xishuophp/content/1_01_lamp%E7%BD%91%E7%AB%99%E6%9E%84%E5%BB%BA.md)
 #### 第3章 层叠样式表css
 #### 第4章 div+css网页标准化布局
