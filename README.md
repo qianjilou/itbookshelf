@@ -1,4 +1,4 @@
-# Overcome myself
+# 程序员的个人书架
 
 [javascript高级程序设计](https://github.com/qianjilou/mybookshelf/tree/master/javascript3)
 
